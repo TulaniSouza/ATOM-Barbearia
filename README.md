@@ -1,10 +1,10 @@
-# Atom Barbearia 💈
+# Hora Marcada Barbearia 💈
 > Precisão no detalhe. Essência no resultado.
 
 ![Slogan do Projeto](/src/assets/ATOM.png)
 
 ## Sobre o Projeto
-O **Atom Barbearia** é uma solução de gestão de agendamentos focada em barbeiros autônomos. O projeto nasceu da necessidade de resolver a sobrecarga administrativa de profissionais como o **Vicente Cavalcante** (nossa Persona), que perdem tempo produtivo organizando horários manualmente via WhatsApp.
+O **Hora Marcada Barbearia** é uma solução de gestão de agendamentos focada em barbeiros autônomos. O projeto nasceu da necessidade de resolver a sobrecarga administrativa de profissionais como o **Vicente Cavalcante** (nossa Persona), que perdem tempo produtivo organizando horários manualmente via WhatsApp.
 
 Este projeto faz parte do desafio **Labs Talents 2026**.
 
@@ -32,6 +32,7 @@ Nosso foco é um "MVP Enxuto" que resolve o problema central:
 - **Josimar Perseu:** Back-end Developer & Database Administrator (DBA).
 - **Guilherme Silva:** Back-end Developer & Systems Architect.
 - **Gabriel Marques:** Scrum Master & Project Management.
+- **Stella Bezerra:** Scrum Master & Project Management.
 
 ---
 Projetado com foco em agilidade e precisão técnica. 2026.
