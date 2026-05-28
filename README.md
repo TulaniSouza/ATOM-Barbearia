@@ -1,7 +1,7 @@
-# Hora Marcada Barbearia 💈
+# Hora Marcada Barbearia 
 > Precisão no detalhe. Essência no resultado.
 
-![Slogan do Projeto](/src/assets/ATOM.png)
+<img src="./src/assets/ATOM.png" alt="Logo ATOM" width="500">
 
 ## Sobre o Projeto
 O **Hora Marcada Barbearia** é uma solução de gestão de agendamentos focada em barbeiros autônomos. O projeto nasceu da necessidade de resolver a sobrecarga administrativa de profissionais como o **Vicente Cavalcante** (nossa Persona), que perdem tempo produtivo organizando horários manualmente via WhatsApp.
