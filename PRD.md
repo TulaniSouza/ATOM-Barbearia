@@ -445,10 +445,9 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [ ] 6.4.3 Solicitações
 
 ### Sprint 7 — Integração e acabamento
-- [ ] 7.1 Integrar telas da pasta `screens` ao projeto principal
-  - [ ] 7.1.1 Reaproveitar componentes comuns
-  - [ ] 7.1.2 Evitar duplicação de header
-  - [ ] 7.1.3 Ajustar imports e nomes
+- [ ] 7.1 Reaproveitar componentes comuns
+  - [ ] 7.1.1 Evitar duplicação de header
+  - [ ] 7.1.2 Ajustar imports e nomes
 - [ ] 7.2 Garantir consistência de conteúdo
   - [ ] 7.2.1 Manter código em inglês
   - [ ] 7.2.2 Manter textos da UI em português
