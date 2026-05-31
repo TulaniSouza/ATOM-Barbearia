@@ -369,24 +369,24 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 2.3.2 Exibir resumo inicial
   - [X] 2.3.3 Manter layout consistente com as demais telas
 
-### Sprint 3 — Agenda mensal
-- [ ] 3.1 Criar componente de calendário mensal
-  - [ ] 3.1.1 Cabeçalho do mês
-  - [ ] 3.1.2 Grade semanal
-  - [ ] 3.1.3 Células com estado visual
-- [ ] 3.2 Exibir eventos por dia
-  - [ ] 3.2.1 Renderizar horários ocupados
-  - [ ] 3.2.2 Renderizar contagem de itens extras
-  - [ ] 3.2.3 Indicar dias com maior volume
-- [ ] 3.3 Criar resumo lateral
-  - [ ] 3.3.1 Total de agendamentos
-  - [ ] 3.3.2 Confirmados
-  - [ ] 3.3.3 Pendentes
-  - [ ] 3.3.4 Cancelados
-  - [ ] 3.3.5 Receita estimada
-- [ ] 3.4 Criar CTA de novo agendamento
-  - [ ] 3.4.1 Botão principal
-  - [ ] 3.4.2 Botão de visualização diária
+### Sprint 3 — Agenda mensal [X]
+- [X] 3.1 Criar componente de calendário mensal
+  - [X] 3.1.1 Cabeçalho do mês
+  - [X] 3.1.2 Grade semanal
+  - [X] 3.1.3 Células com estado visual
+- [X] 3.2 Exibir eventos por dia
+  - [X] 3.2.1 Renderizar horários ocupados
+  - [X] 3.2.2 Renderizar contagem de itens extras
+  - [X] 3.2.3 Indicar dias com maior volume
+- [X] 3.3 Criar resumo lateral [X]
+  - [X] 3.3.1 Total de agendamentos
+  - [X] 3.3.2 Confirmados
+  - [X] 3.3.3 Pendentes
+  - [X] 3.3.4 Cancelados
+  - [X] 3.3.5 Receita estimada
+- [X] 3.4 Criar CTA de novo agendamento [X]
+  - [X] 3.4.1 Botão principal
+  - [X] 3.4.2 Botão de visualização diária
 
 ### Sprint 4 — Agenda do dia
 - [ ] 4.1 Criar lista diária de agendamentos
