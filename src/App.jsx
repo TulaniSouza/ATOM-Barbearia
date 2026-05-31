@@ -5,6 +5,8 @@ import MonthlyAgenda from './components/MonthlyAgenda';
 import DailyAgenda from './components/DailyAgenda';
 import RequestsScreen from './components/RequestsScreen';
 import ConfigScreen from './components/ConfigScreen';
+import DashboardSummary from './components/DashboardSummary';
+import { mockAgenda } from './data/mockAgenda';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -29,10 +31,25 @@ export default function App() {
     );
   }
 
+  // Summary calculations
+  const today = '2026-05-30';
+  const pendingCount = mockAgenda.filter(a => a.status === 'pending').length;
+  const todayCount = mockAgenda.filter(a => a.date === today && a.status === 'confirmed').length;
+  const nextAppointment = mockAgenda.find(a => a.date === today && a.status === 'confirmed');
+
   const renderContent = () => {
     switch (currentView) {
       case 'monthly':
-        return <MonthlyAgenda />;
+        return (
+          <>
+            <DashboardSummary 
+              pendingCount={pendingCount}
+              todayCount={todayCount}
+              nextAppointment={nextAppointment}
+            />
+            <MonthlyAgenda />
+          </>
+        );
       case 'daily':
         return <DailyAgenda />;
       case 'requests':
@@ -53,6 +70,7 @@ export default function App() {
             setCurrentView={setCurrentView} 
             user={user} 
             onLogout={handleLogout} 
+            pendingCount={pendingCount}
           />
           {renderContent()}
         </>

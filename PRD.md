@@ -354,20 +354,20 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 1.4.2 Criar header compartilhado
   - [X] 1.4.3 Definir área de conteúdo principal
 
-### Sprint 2 — Navegação e dashboard principal
-- [ ] 2.1 Criar navegação superior
-  - [ ] 2.1.1 Adicionar abas de Agenda
-  - [ ] 2.1.2 Adicionar aba Dia
-  - [ ] 2.1.3 Adicionar aba Solicitações
-  - [ ] 2.1.4 Adicionar aba Config
-- [ ] 2.2 Implementar estado visual de ativo
-  - [ ] 2.2.1 Destacar aba selecionada
-  - [ ] 2.2.2 Aplicar badge em solicitações pendentes
-  - [ ] 2.2.3 Padronizar hover e foco
-- [ ] 2.3 Criar dashboard após login
-  - [ ] 2.3.1 Direcionar usuário autenticado para a tela principal
-  - [ ] 2.3.2 Exibir resumo inicial
-  - [ ] 2.3.3 Manter layout consistente com as demais telas
+### Sprint 2 — Navegação e dashboard principal [X]
+- [X] 2.1 Criar navegação superior
+  - [X] 2.1.1 Adicionar abas de Agenda
+  - [X] 2.1.2 Adicionar aba Dia
+  - [X] 2.1.3 Adicionar aba Solicitações
+  - [X] 2.1.4 Adicionar aba Config
+- [X] 2.2 Implementar estado visual de ativo
+  - [X] 2.2.1 Destacar aba selecionada
+  - [X] 2.2.2 Aplicar badge em solicitações pendentes
+  - [X] 2.2.3 Padronizar hover e foco
+- [X] 2.3 Criar dashboard após login
+  - [X] 2.3.1 Direcionar usuário autenticado para a tela principal
+  - [X] 2.3.2 Exibir resumo inicial
+  - [X] 2.3.3 Manter layout consistente com as demais telas
 
 ### Sprint 3 — Agenda mensal
 - [ ] 3.1 Criar componente de calendário mensal

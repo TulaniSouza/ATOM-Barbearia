@@ -1,6 +1,6 @@
 import '../styles/AppHeader.scss';
 
-const AppHeader = ({ currentView, setCurrentView, user, onLogout }) => {
+const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount }) => {
   // Helper to get initials from name
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -14,7 +14,7 @@ const AppHeader = ({ currentView, setCurrentView, user, onLogout }) => {
   const navItems = [
     { id: 'monthly', label: 'Agenda', icon: 'calendar_month' },
     { id: 'daily', label: 'Dia', icon: 'calendar_today' },
-    { id: 'requests', label: 'Solicitações', icon: 'notifications', badge: 2 },
+    { id: 'requests', label: 'Solicitações', icon: 'notifications', badge: pendingCount },
     { id: 'config', label: 'Config', icon: 'settings' },
   ];
 

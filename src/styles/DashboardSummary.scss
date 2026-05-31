@@ -1,0 +1,97 @@
+.dashboard-summary {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none; // Hide scrollbar for Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Hide scrollbar for Chrome/Safari
+  }
+
+  @include tablet-up {
+    padding: 1.5rem 3rem;
+    overflow-x: visible;
+  }
+
+  .summary-card {
+    flex: 1;
+    min-width: 140px;
+    background-color: $bg-card;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      border-color: rgba($accent-gold, 0.3);
+    }
+
+    &.highlight {
+      border: 1px solid rgba($accent-gold, 0.2);
+      background: linear-gradient(145deg, $bg-card 0%, rgba($accent-gold, 0.05) 100%);
+    }
+
+    .card-label {
+      font-size: 0.75rem;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .card-value-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .card-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-light;
+        font-family: $font-display;
+      }
+
+      .material-symbols-outlined {
+        font-size: 1.5rem;
+        
+        &.icon-pending {
+          color: $accent-red;
+        }
+
+        &.icon-today {
+          color: $accent-gold;
+        }
+      }
+    }
+
+    .next-appointment-info {
+      display: flex;
+      flex-direction: column;
+
+      .client-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: $accent-gold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .appointment-time {
+        font-size: 0.875rem;
+        color: $text-muted;
+      }
+    }
+
+    .no-appointments {
+      font-size: 0.875rem;
+      color: $text-muted;
+      font-style: italic;
+    }
+  }
+}
