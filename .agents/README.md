@@ -1,6 +1,6 @@
-# Time de Agentes de IA - ATOM Barbearia
+# Time de Agentes de IA - Hora Marcada
 
-Este diretório contém as definições e instruções para os agentes de IA especializados que compõem o time de desenvolvimento do projeto ATOM Barbearia. Cada agente é otimizado para a stack tecnológica do projeto (React, SCSS, Vite) e possui ferramentas específicas para sua função.
+Este diretório contém as definições e instruções para os agentes de IA especializados que compõem o time de desenvolvimento do projeto Hora Marcada. Cada agente é otimizado para a stack tecnológica do projeto (React, SCSS, Vite) e possui ferramentas específicas para sua função.
 
 ## Índice de Agentes
 

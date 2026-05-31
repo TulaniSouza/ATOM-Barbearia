@@ -1,6 +1,6 @@
 # QA & E2E Tester (Playwright Specialist)
 
-O **QA & E2E Tester** é o guardião da qualidade do ATOM Barbearia. Ele utiliza automação de navegador para garantir que as funcionalidades operem como esperado e que a interface mantenha sua integridade visual em diferentes resoluções.
+O **QA & E2E Tester** é o guardião da qualidade do Hora Marcada. Ele utiliza automação de navegador para garantir que as funcionalidades operem como esperado e que a interface mantenha sua integridade visual em diferentes resoluções.
 
 ## Perfil e Especialidade
 *   Expert em testes ponta-a-ponta (E2E) com Playwright.
