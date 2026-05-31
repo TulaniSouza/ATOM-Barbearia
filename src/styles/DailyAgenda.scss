@@ -1,0 +1,243 @@
+.daily-agenda-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  @include tablet-up {
+    padding: 2rem 3rem;
+  }
+
+  // Action Bar
+  .action-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    @include tablet-up {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title-display {
+      font-family: $font-display;
+      font-size: 2.25rem;
+      text-transform: uppercase;
+      font-style: italic;
+      letter-spacing: 0.05em;
+      margin: 0;
+
+      .highlight {
+        color: $accent-gold; // Changed to match project gold
+      }
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .date-selector {
+      display: flex;
+      align-items: center;
+      background-color: $bg-card;
+      border: 1px solid $border-suttle;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      gap: 1.5rem;
+
+      .date-display {
+        font-weight: 700;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        color: $text-light;
+      }
+
+      .nav-btn {
+        background: none;
+        border: none;
+        color: $text-muted;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: $text-light;
+        }
+      }
+    }
+
+    .btn-new {
+      background-color: $accent-gold; // Changed to match project gold
+      color: $bg-dark;
+      font-weight: 700;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  // Filters
+  .filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-tab {
+      background: transparent;
+      border: 1px solid $border-active;
+      color: $text-muted;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: $text-muted;
+      }
+
+      &.active {
+        border-color: $accent-gold;
+        color: $accent-gold;
+        background-color: rgba($accent-gold, 0.05);
+      }
+    }
+  }
+
+  // Appointment Cards
+  .appointment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .appointment-card {
+      background-color: $bg-card;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid transparent;
+      transition: transform 0.2s;
+
+      @include tablet-up {
+        padding: 1.5rem;
+      }
+
+      &.border-confirmed { border-left-color: $accent-green; }
+      &.border-pending { border-left-color: $accent-orange; }
+      &.border-canceled { border-left-color: $accent-red; }
+
+      &.opacity-muted {
+        opacity: 0.6;
+      }
+
+      .info-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        @include tablet-up {
+          gap: 3rem;
+        }
+
+        .time-block {
+          text-align: center;
+          width: 60px;
+
+          .time {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: $text-light;
+          }
+
+          .duration {
+            font-size: 0.65rem;
+            color: $text-muted;
+            text-transform: uppercase;
+            margin: 0;
+          }
+        }
+
+        .details {
+          .service-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+            color: $text-light;
+          }
+
+          .client-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: $text-muted;
+            font-size: 0.875rem;
+
+            .icon {
+              background: rgba(168, 85, 247, 0.1);
+              width: 1.25rem;
+              height: 1.25rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50%;
+              font-size: 0.65rem;
+            }
+          }
+        }
+      }
+
+      .status-group {
+        text-align: right;
+
+        .status-badge {
+          display: inline-block;
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          padding: 2px 8px;
+          border-radius: 9999px;
+          margin-bottom: 0.5rem;
+
+          &.badge-confirmed { background: rgba($accent-green, 0.1); color: $accent-green; }
+          &.badge-pending { background: rgba($accent-orange, 0.1); color: $accent-orange; }
+          &.badge-canceled { background: rgba($accent-red, 0.1); color: $accent-red; }
+        }
+
+        .price {
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin: 0;
+          color: $text-light;
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: $text-muted;
+    border: 1px dashed $border-suttle;
+    border-radius: 1rem;
+  }
+}

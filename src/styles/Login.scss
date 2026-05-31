@@ -1,20 +1,11 @@
 // Login.scss
-@import './mixins';
-
-$bg-dark: #0d0d0d;
-$bg-card: #1a1a1a;
-$accent-gold: #cca43b;
-$accent-red: #ff4d4d;
-$accent-green: #2ecc71;
-$text-light: #ffffff;
-$text-muted: #aaaaaa;
 
 .login-container {
   @include flex-center(column);
   min-height: 100vh;
   background-color: $bg-dark;
   padding: 15px;
-  font-family: 'Barlow', sans-serif;
+  font-family: $font-base;
   position: relative;
   box-sizing: border-box;
 
@@ -39,7 +30,7 @@ $text-muted: #aaaaaa;
       }
 
       h1 {
-        font-family: 'Bebas Neue', sans-serif;
+        font-family: $font-display;
         color: $accent-gold;
         font-size: 2.6rem;
         letter-spacing: 2px;
@@ -130,7 +121,6 @@ $text-muted: #aaaaaa;
       border: 1px solid $accent-gold;
       border-radius: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-      border-radius: 12px;
     }
 
     .chatbot-header {

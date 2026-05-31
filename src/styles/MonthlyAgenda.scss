@@ -1,0 +1,186 @@
+// MonthlyAgenda.scss
+
+.monthly-agenda-container {
+  min-height: 100vh;
+  background-color: $bg-dark;
+  color: $text-light;
+  padding: 20px;
+  font-family: $font-base;
+  box-sizing: border-box;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .section-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .section-title {
+      font-family: $font-display;
+      font-size: 2rem;
+      color: $text-light;
+      margin: 0;
+      letter-spacing: 0.1em;
+
+      .highlight {
+        color: $accent-gold;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.btn-secondary {
+          background: transparent;
+          border: 1px solid $border-suttle;
+          color: $text-muted;
+          &:hover { background: $bg-card; color: $text-light; }
+        }
+
+        &.btn-primary {
+          background: $accent-gold;
+          border: none;
+          color: $bg-dark;
+          &:hover { filter: brightness(1.1); }
+        }
+      }
+    }
+  }
+
+  .calendar-card {
+    background-color: $bg-card;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    .weekdays-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 15px;
+      text-align: center;
+      
+      .weekday-name {
+        color: $accent-gold;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+
+        .desktop-only { display: none; }
+      }
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+
+      .day-cell {
+        aspect-ratio: 1 / 1;
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        @include flex-center(column);
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s;
+
+        &:hover:not(.empty) {
+          background-color: rgba(255, 255, 255, 0.08);
+          transform: translateY(-2px);
+        }
+
+        &.empty {
+          background-color: transparent;
+          cursor: default;
+        }
+
+        &.has-appointment {
+          border: 1px solid $accent-gold;
+          
+          .day-number {
+            color: $accent-gold;
+            font-weight: 700;
+          }
+        }
+
+        .day-number {
+          font-size: 1.1rem;
+        }
+
+        .appointment-indicator {
+          width: 6px;
+          height: 6px;
+          background-color: $accent-gold;
+          border-radius: 50%;
+          margin-top: 4px;
+          box-shadow: 0 0 8px $accent-gold;
+        }
+      }
+    }
+  }
+
+  .calendar-legend {
+    margin-top: 25px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: $text-muted;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .indicator-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+
+        &.highlight {
+          background-color: $accent-gold;
+          border: 1px solid $accent-gold;
+        }
+
+        &.normal {
+          background-color: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+  }
+
+  // Media Query para Desktop usando mixin
+  @include tablet-up {
+    padding: 40px;
+
+    .calendar-card {
+      padding: 30px;
+
+      .weekdays-grid {
+        .weekday-name {
+          .mobile-only { display: none; }
+          .desktop-only { display: inline; }
+        }
+      }
+
+      .days-grid {
+        gap: 15px;
+        
+        .day-cell .day-number {
+          font-size: 1.25rem;
+        }
+      }
+    }
+  }
+}
