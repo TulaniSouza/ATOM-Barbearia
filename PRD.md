@@ -456,10 +456,13 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [ ] 7.3.1 Mobile
   - [ ] 7.3.2 Tablet
   - [ ] 7.3.3 Desktop
-- [ ] 7.4 Revisão final de usabilidade
-  - [ ] 7.4.1 Leitura da agenda
-  - [ ] 7.4.2 Clareza de status
-  - [ ] 7.4.3 Acesso rápido às principais ações
+- [ ] 7.4 Criar componente menu hambúrguer na versão mobile
+  - [ ] 7.4.1 Com menu aberto, acrescentar desfoque no fundo para impedir interação com o conteúdo que não está visível
+  - [ ] 7.4.2 Botões do cabeçalho devem ficar no menu hambúrguer
+- [ ] 7.5 Revisão final de usabilidade
+  - [ ] 7.5.1 Leitura da agenda
+  - [ ] 7.5.2 Clareza de status
+  - [ ] 7.5.3 Acesso rápido às principais ações
 
 ### Sprint 8 — Itens deixados para fases finais
 - [ ] 8.1 Docker
