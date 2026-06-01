@@ -1,0 +1,333 @@
+// MonthlyAgenda.scss
+
+.monthly-agenda-container {
+  min-height: 100vh;
+  background-color: $bg-dark;
+  color: $text-light;
+  padding: 20px;
+  font-family: $font-base;
+  box-sizing: border-box;
+  max-width: 1200px; // Aumentado para acomodar o resumo lateral
+  margin: 0 auto;
+
+  .section-header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .title-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .section-title {
+        font-family: $font-display;
+        font-size: 2rem;
+        color: $text-light;
+        margin: 0;
+        letter-spacing: 0.1em;
+
+        .highlight {
+          color: $accent-gold;
+        }
+      }
+
+      .month-navigation {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        background-color: $bg-card;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        width: fit-content;
+
+        .nav-btn {
+          background: transparent;
+          border: none;
+          color: $accent-gold;
+          font-size: 1.25rem;
+          font-weight: bold;
+          cursor: pointer;
+          padding: 0 0.5rem;
+          transition: transform 0.2s;
+
+          &:hover { transform: scale(1.2); }
+        }
+
+        .current-month-display {
+          font-weight: 700;
+          color: $text-light;
+          min-width: 120px;
+          text-align: center;
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex: 1;
+
+        &.btn-secondary {
+          background: transparent;
+          border: 1px solid $border-suttle;
+          color: $text-muted;
+          &:hover { background: $bg-card; color: $text-light; }
+        }
+
+        &.btn-primary {
+          background: $accent-gold;
+          border: none;
+          color: $bg-dark;
+          &:hover { filter: brightness(1.1); }
+        }
+      }
+    }
+  }
+
+  .calendar-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .calendar-card {
+    background-color: $bg-card;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    .weekdays-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-bottom: 15px;
+      text-align: center;
+      
+      .weekday-name {
+        color: $accent-gold;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+
+        .desktop-only { display: none; }
+      }
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+
+      .day-cell {
+        aspect-ratio: 1 / 1;
+        background-color: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        @include flex-center(column);
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s;
+        border: 1px solid transparent;
+
+        &:hover:not(.empty) {
+          background-color: rgba(255, 255, 255, 0.08);
+          transform: translateY(-2px);
+        }
+
+        &.empty {
+          background-color: transparent;
+          cursor: default;
+        }
+
+        &.has-appointment {
+          border-color: rgba($accent-gold, 0.3);
+          
+          .day-number {
+            color: $text-light;
+          }
+        }
+
+        &.busy-day {
+          background-color: rgba($accent-gold, 0.1);
+          border-color: $accent-gold;
+
+          .day-number {
+            color: $accent-gold;
+            font-weight: 700;
+          }
+        }
+
+        .day-number {
+          font-size: 1rem;
+        }
+
+        .appointment-badge {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 16px;
+          height: 16px;
+          background-color: $accent-gold;
+          color: $bg-dark;
+          font-size: 0.65rem;
+          font-weight: 800;
+          border-radius: 50%;
+          @include flex-center;
+          box-shadow: 0 0 5px rgba($accent-gold, 0.5);
+        }
+      }
+    }
+  }
+
+  .calendar-legend {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: $text-muted;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .indicator-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+
+        &.highlight {
+          background-color: rgba($accent-gold, 0.3);
+          border: 1px solid $accent-gold;
+        }
+
+        &.busy {
+          background-color: rgba($accent-gold, 0.1);
+          border: 1px solid $accent-gold;
+        }
+      }
+    }
+  }
+
+  .summary-section {
+    .summary-title {
+      font-family: $font-display;
+      font-size: 1.5rem;
+      color: $text-light;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+
+      .summary-card {
+        background-color: $bg-card;
+        padding: 1.25rem;
+        border-radius: 12px;
+        border: 1px solid $border-suttle;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .label {
+          font-size: 0.75rem;
+          color: $text-muted;
+          text-transform: uppercase;
+        }
+
+        .value {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $text-light;
+        }
+
+        &.status-confirmed { border-left: 4px solid $accent-green; }
+        &.status-pending { border-left: 4px solid $accent-orange; }
+        &.status-canceled { border-left: 4px solid $accent-red; }
+        
+        &.revenue-card {
+          grid-column: 1 / -1;
+          background: linear-gradient(135deg, $bg-card 0%, rgba($accent-gold, 0.05) 100%);
+          border: 1px solid $accent-gold;
+
+          .label { color: $accent-gold; font-weight: 700; }
+          .value { color: $accent-gold; font-size: 2rem; }
+        }
+      }
+    }
+  }
+
+  // Media Query para Desktop
+  @include tablet-up {
+    padding: 40px;
+
+    .section-header-actions {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      .title-nav {
+        .section-title { font-size: 2.5rem; }
+      }
+
+      .actions {
+        button { flex: none; width: auto; }
+      }
+    }
+
+    .calendar-layout {
+      flex-direction: row;
+      align-items: flex-start;
+
+      .calendar-card {
+        flex: 1.5;
+        padding: 30px;
+
+        .weekdays-grid {
+          .weekday-name {
+            font-size: 0.85rem;
+            .mobile-only { display: none; }
+            .desktop-only { display: inline; }
+          }
+        }
+
+        .days-grid {
+          gap: 12px;
+          .day-cell .day-number { font-size: 1.25rem; }
+        }
+      }
+
+      .summary-section {
+        flex: 1;
+        background-color: rgba(255, 255, 255, 0.02);
+        padding: 25px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+
+        .summary-grid {
+          grid-template-columns: 1fr 1fr;
+          
+          .revenue-card {
+            grid-column: span 2;
+          }
+        }
+      }
+    }
+  }
+}
