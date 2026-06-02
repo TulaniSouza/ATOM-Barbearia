@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/DashboardSummary.scss';
 
 const DashboardSummary = ({ pendingCount, todayCount, nextAppointment }) => {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { mockAgenda } from '../data/mockAgenda';
 import '../styles/MonthlyAgenda.scss';
 

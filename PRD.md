@@ -388,42 +388,42 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 3.4.1 Botão principal
   - [X] 3.4.2 Botão de visualização diária
 
-### Sprint 4 — Agenda do dia
-- [ ] 4.1 Criar lista diária de agendamentos
-  - [ ] 4.1.1 Linha de horário
-  - [ ] 4.1.2 Nome do serviço
-  - [ ] 4.1.3 Nome do cliente
-  - [ ] 4.1.4 Badge de status
-- [ ] 4.2 Implementar filtro por status
-  - [ ] 4.2.1 Aba Todos
-  - [ ] 4.2.2 Aba Confirmados
-  - [ ] 4.2.3 Aba Pendentes
-- [ ] 4.3 Separar estados visuais
-  - [ ] 4.3.1 Confirmado
-  - [ ] 4.3.2 Pendente
-  - [ ] 4.3.3 Cancelado
-- [ ] 4.4 Adicionar ações de criação
-  - [ ] 4.4.1 Botão de novo agendamento
-  - [ ] 4.4.2 Abertura de formulário simples
+### Sprint 4 — Agenda do dia [X]
+- [X] 4.1 Criar lista diária de agendamentos
+  - [X] 4.1.1 Linha de horário
+  - [X] 4.1.2 Nome do serviço
+  - [X] 4.1.3 Nome do cliente
+  - [X] 4.1.4 Badge de status
+- [X] 4.2 Implementar filtro por status
+  - [X] 4.2.1 Aba Todos
+  - [X] 4.2.2 Aba Confirmados
+  - [X] 4.2.3 Aba Pendentes
+- [X] 4.3 Separar estados visuais
+  - [X] 4.3.1 Confirmado
+  - [X] 4.3.2 Pendente
+  - [X] 4.3.3 Cancelado
+- [X] 4.4 Adicionar ações de criação
+  - [X] 4.4.1 Botão de novo agendamento
+  - [X] 4.4.2 Abertura de formulário simples
 
-### Sprint 5 — Solicitações
-- [ ] 5.1 Criar tela de solicitações
-  - [ ] 5.1.1 Cabeçalho da seção
-  - [ ] 5.1.2 Contagem de pendentes e total
-  - [ ] 5.1.3 Filtro de status
-- [ ] 5.2 Criar card de solicitação
-  - [ ] 5.2.1 Serviço
-  - [ ] 5.2.2 Data e horário
-  - [ ] 5.2.3 Cliente
-  - [ ] 5.2.4 Observação
-- [ ] 5.3 Criar ações do barbeiro
-  - [ ] 5.3.1 Confirmar solicitação
-  - [ ] 5.3.2 Recusar solicitação
-  - [ ] 5.3.3 Remarcar solicitação
-- [ ] 5.4 Padronizar feedback visual
-  - [ ] 5.4.1 Sucesso
-  - [ ] 5.4.2 Erro
-  - [ ] 5.4.3 Atenção
+### Sprint 5 — Solicitações [X]
+- [X] 5.1 Criar tela de solicitações
+  - [X] 5.1.1 Cabeçalho da seção
+  - [X] 5.1.2 Contagem de pendentes e total
+  - [X] 5.1.3 Filtro de status
+- [X] 5.2 Criar card de solicitação
+  - [X] 5.2.1 Serviço
+  - [X] 5.2.2 Data e horário
+  - [X] 5.2.3 Cliente
+  - [X] 5.2.4 Observação
+- [X] 5.3 Criar ações do barbeiro
+  - [X] 5.3.1 Confirmar solicitação
+  - [X] 5.3.2 Recusar solicitação
+  - [X] 5.3.3 Remarcar solicitação
+- [X] 5.4 Padronizar feedback visual
+  - [X] 5.4.1 Sucesso
+  - [X] 5.4.2 Erro
+  - [X] 5.4.3 Atenção
 
 ### Sprint 6 — Configurações
 - [ ] 6.1 Criar tela de horários

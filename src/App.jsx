@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Login from './components/Login';
 import AppHeader from './components/AppHeader';
 import MonthlyAgenda from './components/MonthlyAgenda';
@@ -16,6 +16,46 @@ export default function App() {
     { id: 1, client: "Carlos Lima", time: "09:00", service: "Cabelo & Barba" }
   ]);
 
+  // Estado global de solicitações para sincronização
+  const [requests, setRequests] = useState([
+    {
+      id: 1,
+      service: 'Corte Masculino',
+      date: '02/06/2026', // Hoje
+      time: '08:40',
+      client: 'Jefferson Silva',
+      note: 'Degradê com navalha',
+      status: 'pending'
+    },
+    {
+      id: 2,
+      service: 'Corte + Barba',
+      date: '03/06/2026', // Amanhã
+      time: '10:00',
+      client: 'Lucas Ramos',
+      note: 'Barba bem redonda',
+      status: 'pending'
+    },
+    {
+      id: 3,
+      service: 'Corte Masculino',
+      date: '02/06/2026', // Hoje
+      time: '15:00',
+      client: 'Anderson Gomes',
+      note: '',
+      status: 'finished'
+    },
+    {
+      id: 4,
+      service: 'Barba Imperial',
+      date: '01/06/2026', // Ontem
+      time: '11:30',
+      client: 'Ricardo Oliveira',
+      note: 'Tratamento com toalha quente',
+      status: 'finished'
+    }
+  ]);
+
   const handleLogout = () => {
     setUser(null);
     setCurrentView('monthly');
@@ -25,7 +65,6 @@ export default function App() {
     return (
       <Login 
         onLoginSuccess={(data) => setUser(data)} 
-        pendingAppointments={pendingAppointments}
         setPendingAppointments={setPendingAppointments}
       />
     );
@@ -33,7 +72,7 @@ export default function App() {
 
   // Summary calculations
   const today = '2026-05-30';
-  const pendingCount = mockAgenda.filter(a => a.status === 'pending').length;
+  const pendingCount = requests.filter(req => req.status === 'pending').length;
   const todayCount = mockAgenda.filter(a => a.date === today && a.status === 'confirmed').length;
   const nextAppointment = mockAgenda.find(a => a.date === today && a.status === 'confirmed');
 
@@ -53,7 +92,7 @@ export default function App() {
       case 'daily':
         return <DailyAgenda />;
       case 'requests':
-        return <RequestsScreen />;
+        return <RequestsScreen requests={requests} setRequests={setRequests} />;
       case 'config':
         return <ConfigScreen />;
       default:

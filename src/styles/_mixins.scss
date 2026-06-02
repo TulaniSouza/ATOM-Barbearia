@@ -32,3 +32,9 @@
     @content;
   }
 }
+
+@mixin mobile-only {
+  @media (max-width: 767px) {
+    @content;
+  }
+}

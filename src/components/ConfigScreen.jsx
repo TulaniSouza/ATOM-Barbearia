@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/ConfigScreen.scss';
 
 const ConfigScreen = () => {

@@ -1,24 +1,41 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import AppointmentForm from './AppointmentForm';
 import '../styles/DailyAgenda.scss';
 
 const DailyAgenda = ({ appointments: initialAppointments }) => {
   const [filter, setFilter] = useState('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // Dados mockados baseados no HTML original, caso não venham via props
-  const mockData = initialAppointments || [
+  // Convertendo mockData para estado para permitir adição dinâmica
+  const [appointments, setAppointments] = useState(initialAppointments || [
     { id: 1, time: '09:00', duration: '45min', service: 'Corte Masculino', client: 'Jefferson Silva', status: 'confirmed', price: 80 },
     { id: 2, time: '10:30', duration: '45min', service: 'Corte Masculino', client: 'Lucas Ramos', status: 'confirmed', price: 80 },
     { id: 3, time: '14:00', duration: '1h', service: 'Corte + Barba', client: 'Marcos Lima', status: 'pending', price: 120 },
     { id: 4, time: '16:30', duration: '45min', service: 'Corte Masculino', client: 'André Costa', status: 'canceled', price: 80 },
-  ];
+  ]);
 
-  const filteredAppointments = mockData.filter(app => {
+  const filteredAppointments = appointments.filter(app => {
     if (filter === 'all') return true;
     return app.status === filter;
   });
 
-  const handleNewAppointment = () => {
-    alert('Funcionalidade de Novo Agendamento em breve!');
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddAppointment = (newApp) => {
+    const appointmentWithId = {
+      ...newApp,
+      id: Date.now(),
+      status: 'pending', // Novos agendamentos entram como pendentes por padrão
+      duration: '45min'  // Duração padrão para o MVP
+    };
+    setAppointments([appointmentWithId, ...appointments]);
+    setIsModalOpen(false);
   };
 
   const getStatusLabel = (status) => {
@@ -45,7 +62,7 @@ const DailyAgenda = ({ appointments: initialAppointments }) => {
             <button className="nav-btn">{'>'}</button>
           </div>
           
-          <button className="btn-new" onClick={handleNewAppointment}>
+          <button className="btn-new" onClick={handleOpenModal}>
             + Novo
           </button>
         </div>
@@ -105,6 +122,14 @@ const DailyAgenda = ({ appointments: initialAppointments }) => {
           <div className="empty-state">Nenhum agendamento encontrado para este filtro.</div>
         )}
       </div>
+
+      {/* Modal de Novo Agendamento */}
+      {isModalOpen && (
+        <AppointmentForm 
+          onSave={handleAddAppointment} 
+          onCancel={handleCloseModal} 
+        />
+      )}
     </main>
   );
 };

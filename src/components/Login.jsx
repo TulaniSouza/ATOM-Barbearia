@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../styles/Login.scss';
 import logoImg from '../assets/ATOM.png';
 
-export default function Login({ onLoginSuccess, pendingAppointments, setPendingAppointments }) {
+export default function Login({ onLoginSuccess, setPendingAppointments }) {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
