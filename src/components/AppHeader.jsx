@@ -1,6 +1,8 @@
 import '../styles/AppHeader.scss';
 
 const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount }) => {
+  const isBarber = user?.role === 'barber';
+
   // Helper to get initials from name
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -11,18 +13,20 @@ const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount }
     return name.slice(0, 2).toUpperCase();
   };
 
-  const navItems = [
+  const navItems = isBarber ? [
     { id: 'monthly', label: 'Agenda', icon: 'calendar_month' },
     { id: 'daily', label: 'Dia', icon: 'calendar_today' },
     { id: 'requests', label: 'Solicitações', icon: 'notifications', badge: pendingCount },
-    { id: 'config', label: 'Config', icon: 'settings' },
+    { id: 'config', label: 'Ajustes', icon: 'settings' },
+  ] : [
+    { id: 'client_dashboard', label: 'Início', icon: 'home' },
   ];
 
   return (
     <header className="app-header">
       <div className="header-container">
         {/* Brand / Logo */}
-        <div className="brand" onClick={() => setCurrentView('monthly')}>
+        <div className="brand" onClick={() => isBarber && setCurrentView('monthly')}>
           <div className="logo-placeholder">A</div>
           <h1 className="logo-text">
             HORA <span>MARCADA</span>
