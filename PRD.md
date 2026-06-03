@@ -425,24 +425,24 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 5.4.2 Erro
   - [X] 5.4.3 Atenção
 
-### Sprint 6 — Configurações
-- [ ] 6.1 Criar tela de horários
-  - [ ] 6.1.1 Lista de blocos de horário
-  - [ ] 6.1.2 Ação de editar
-  - [ ] 6.1.3 Ação de remover
-- [ ] 6.2 Criar seção de serviços
-  - [ ] 6.2.1 Lista de serviços
-  - [ ] 6.2.2 Duração do serviço
-  - [ ] 6.2.3 Preço do serviço
-  - [ ] 6.2.4 Ação de adicionar serviço
-- [ ] 6.3 Padronizar formulários
-  - [ ] 6.3.1 Inputs
-  - [ ] 6.3.2 Selects
-  - [ ] 6.3.3 Botões de ação
-- [ ] 6.4 Organizar dados mockados
-  - [ ] 6.4.1 Horários
-  - [ ] 6.4.2 Serviços
-  - [ ] 6.4.3 Solicitações
+### Sprint 6 — Configurações [X]
+- [X] 6.1 Criar tela de horários
+  - [X] 6.1.1 Lista de blocos de horário
+  - [X] 6.1.2 Ação de editar
+  - [X] 6.1.3 Ação de remover
+- [X] 6.2 Criar seção de serviços
+  - [X] 6.2.1 Lista de serviços
+  - [X] 6.2.2 Duração do serviço
+  - [X] 6.2.3 Preço do serviço
+  - [X] 6.2.4 Ação de adicionar serviço
+- [X] 6.3 Padronizar formulários
+  - [X] 6.3.1 Inputs
+  - [X] 6.3.2 Selects
+  - [X] 6.3.3 Botões de ação
+- [X] 6.4 Organizar dados mockados
+  - [X] 6.4.1 Horários
+  - [X] 6.4.2 Serviços
+  - [X] 6.4.3 Solicitações
 
 ### Sprint 7 — Integração e acabamento
 - [ ] 7.1 Reaproveitar componentes comuns

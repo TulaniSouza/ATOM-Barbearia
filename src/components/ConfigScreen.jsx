@@ -1,21 +1,80 @@
+import { useState } from 'react';
+import { mockWorkingHours, mockServices } from '../data/mockAgenda';
 import '../styles/ConfigScreen.scss';
 
 const ConfigScreen = () => {
-  const workingHours = [
-    { id: 1, start: '08:00', end: '11:00' },
-    { id: 2, start: '11:00', end: '18:00' },
-  ];
+  const [workingHours, setWorkingHours] = useState(mockWorkingHours);
+  const [services, setServices] = useState(mockServices);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null); // 'hour' or 'service'
+  const [editingItem, setEditingItem] = useState(null);
 
-  const services = [
-    { id: 1, name: 'Corte Masculino', duration: '00:40', price: '80' },
-    { id: 2, name: 'Corte + Barba', duration: '01:00', price: '120' },
-    { id: 3, name: 'Sobrancelha', duration: '00:20', price: '30' },
-  ];
+  const handleAddHour = () => {
+    setModalType('hour');
+    setEditingItem(null);
+    setIsModalOpen(true);
+  };
 
-  const handleAddHour = () => alert('Adicionar novo horário');
-  const handleAddService = () => alert('Adicionar novo serviço');
-  const handleEdit = (type, id) => alert(`Editar ${type} ${id}`);
-  const handleDelete = (type, id) => alert(`Excluir ${type} ${id}`);
+  const handleAddService = () => {
+    setModalType('service');
+    setEditingItem(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (type, item) => {
+    setModalType(type);
+    setEditingItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (type, id) => {
+    if (window.confirm(`Tem certeza que deseja excluir este ${type === 'hour' ? 'horário' : 'serviço'}?`)) {
+      if (type === 'hour') {
+        setWorkingHours(workingHours.filter(h => h.id !== id));
+      } else {
+        setServices(services.filter(s => s.id !== id));
+      }
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingItem(null);
+    setModalType(null);
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    
+    if (modalType === 'hour') {
+      const newHour = {
+        id: editingItem ? editingItem.id : Date.now(),
+        start: formData.get('start'),
+        end: formData.get('end'),
+      };
+      
+      if (editingItem) {
+        setWorkingHours(workingHours.map(h => h.id === editingItem.id ? newHour : h));
+      } else {
+        setWorkingHours([...workingHours, newHour]);
+      }
+    } else {
+      const newService = {
+        id: editingItem ? editingItem.id : Date.now(),
+        name: formData.get('name'),
+        duration: formData.get('duration'),
+        price: formData.get('price'),
+      };
+      
+      if (editingItem) {
+        setServices(services.map(s => s.id === editingItem.id ? newService : s));
+      } else {
+        setServices([...services, newService]);
+      }
+    }
+    closeModal();
+  };
 
   return (
     <div className="config-container">
@@ -34,14 +93,14 @@ const ConfigScreen = () => {
               <div className="item-actions">
                 <button 
                   className="btn-action edit" 
-                  onClick={() => handleEdit('horário', hour.id)}
+                  onClick={() => handleEdit('hour', hour)}
                   aria-label="Editar horário"
                 >
                   <span className="material-symbols-outlined">edit</span>
                 </button>
                 <button 
                   className="btn-action delete" 
-                  onClick={() => handleDelete('horário', hour.id)}
+                  onClick={() => handleDelete('hour', hour.id)}
                   aria-label="Excluir horário"
                 >
                   <span className="material-symbols-outlined">delete</span>
@@ -74,14 +133,14 @@ const ConfigScreen = () => {
                 <div className="item-actions">
                   <button 
                     className="btn-action edit" 
-                    onClick={() => handleEdit('serviço', service.id)}
+                    onClick={() => handleEdit('service', service)}
                     aria-label="Editar serviço"
                   >
                     <span className="material-symbols-outlined">edit</span>
                   </button>
                   <button 
                     className="btn-action delete" 
-                    onClick={() => handleDelete('serviço', service.id)}
+                    onClick={() => handleDelete('service', service.id)}
                     aria-label="Excluir serviço"
                   >
                     <span className="material-symbols-outlined">delete</span>
@@ -92,6 +151,52 @@ const ConfigScreen = () => {
           ))}
         </div>
       </section>
+
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingItem ? 'Editar' : 'Adicionar'} {modalType === 'hour' ? 'Horário' : 'Serviço'}</h3>
+              <button className="btn-close" onClick={closeModal}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleSave} className="config-form">
+              {modalType === 'hour' ? (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="start">Início</label>
+                    <input type="time" id="start" name="start" defaultValue={editingItem?.start} required />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="end">Fim</label>
+                    <input type="time" id="end" name="end" defaultValue={editingItem?.end} required />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="name">Nome do Serviço</label>
+                    <input type="text" id="name" name="name" defaultValue={editingItem?.name} placeholder="Ex: Corte Degradê" required />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="duration">Duração (HH:MM)</label>
+                    <input type="text" id="duration" name="duration" defaultValue={editingItem?.duration} placeholder="00:30" required />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="price">Preço (R$)</label>
+                    <input type="number" id="price" name="price" defaultValue={editingItem?.price} placeholder="50" required />
+                  </div>
+                </>
+              )}
+              <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={closeModal}>Cancelar</button>
+                <button type="submit" className="btn-primary">Salvar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
