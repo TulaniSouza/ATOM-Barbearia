@@ -19,9 +19,20 @@
   border-radius: 1rem;
   width: 100%;
   max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
   padding: 2rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   animation: modal-appear 0.3s ease-out;
+
+  /* Custom scrollbar for better aesthetics */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $border-active;
+    border-radius: 10px;
+  }
 
   .modal-title {
     font-family: $font-display;
@@ -76,7 +87,7 @@
 
   .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr; // Time gets more space, price (value) gets less
     gap: 1rem;
   }
 

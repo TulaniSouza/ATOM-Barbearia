@@ -6,6 +6,7 @@ import DailyAgenda from './components/DailyAgenda';
 import RequestsScreen from './components/RequestsScreen';
 import ConfigScreen from './components/ConfigScreen';
 import DashboardSummary from './components/DashboardSummary';
+import ClientDashboard from './components/ClientDashboard';
 import { mockAgenda } from './data/mockAgenda';
 
 export default function App() {
@@ -66,7 +67,7 @@ export default function App() {
       <Login 
         onLoginSuccess={(data) => {
           setUser(data);
-          if (data.role === 'client') {
+          if (data.role === 'customer') {
             setCurrentView('client_dashboard');
           }
         }} 
@@ -82,30 +83,12 @@ export default function App() {
   const nextAppointment = mockAgenda.find(a => a.date === today && a.status === 'confirmed');
 
   const renderContent = () => {
-    if (user.role === 'client') {
+    if (user.role === 'customer') {
       return (
-        <div style={{ padding: '20px' }}>
-          <div style={{ background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
-            <h3 style={{ color: '#cca43b', marginTop: 0 }}>Google Calendar Integrado (Visão do Cliente)</h3>
-            <p style={{ color: '#aaa', fontSize: '14px' }}>Escolha um dos horários disponíveis sincronizados com a agenda:</p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '10px', marginTop: '15px' }}>
-              {["09:00", "10:00", "11:00", "14:00", "15:00"].map((time) => (
-                <button 
-                  key={time}
-                  onClick={() => {
-                    const newAppt = { id: Date.now(), client: "Cliente do Painel", time: time, service: "Corte Tradicional (Painel Web)" };
-                    setPendingAppointments(prev => [...prev, newAppt]);
-                    alert(`Sucesso! Solicitação para às ${time}h enviada ao barbeiro.`);
-                  }}
-                  style={{ padding: '12px', background: '#262626', color: '#fff', border: '1px solid #cca43b', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <ClientDashboard 
+          user={user} 
+          setPendingAppointments={setPendingAppointments} 
+        />
       );
     }
 
@@ -144,4 +127,4 @@ export default function App() {
       {renderContent()}
     </div>
   );
-  }
+}

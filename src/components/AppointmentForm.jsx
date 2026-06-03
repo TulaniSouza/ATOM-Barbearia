@@ -5,9 +5,17 @@ const AppointmentForm = ({ onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     client: '',
     service: 'Corte Masculino',
+    barber: 'Qualquer Barbeiro',
     time: '',
     price: 80
   });
+
+  const barbers = [
+    "Qualquer Barbeiro",
+    "João (Especialista em Barba)",
+    "Lucas (Degradê & Estilo)",
+    "Marcos (Cortes Tradicionais)"
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +65,20 @@ const AppointmentForm = ({ onSave, onCancel }) => {
               <option value="Barba">Barba</option>
               <option value="Corte + Barba">Corte + Barba</option>
               <option value="Pezinho">Pezinho</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="barber">Barbeiro / Profissional</label>
+            <select 
+              id="barber" 
+              name="barber" 
+              value={formData.barber} 
+              onChange={handleChange}
+            >
+              {barbers.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
             </select>
           </div>
 

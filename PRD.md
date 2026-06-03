@@ -444,7 +444,7 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 6.4.2 Serviços
   - [X] 6.4.3 Solicitações
 
-### Sprint 7 — Integração e acabamento
+### Sprint 7 — Integração e acabamento [X]
 - [X] 7.1 Reaproveitar componentes comuns
   - [X] 7.1.1 Evitar duplicação de header
   - [X] 7.1.2 Ajustar imports e nomes
@@ -452,17 +452,17 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 7.2.1 Manter código em inglês
   - [X] 7.2.2 Manter textos da UI em português
   - [X] 7.2.3 Revisar microcopy
-- [ ] 7.3 Ajustar responsividade
-  - [ ] 7.3.1 Mobile
-  - [ ] 7.3.2 Tablet
-  - [ ] 7.3.3 Desktop
-- [ ] 7.4 Criar componente menu hambúrguer na versão mobile
-  - [ ] 7.4.1 Com menu aberto, acrescentar desfoque no fundo para impedir interação com o conteúdo que não está visível
-  - [ ] 7.4.2 Botões do cabeçalho devem ficar no menu hambúrguer
-- [ ] 7.5 Revisão final de usabilidade
-  - [ ] 7.5.1 Leitura da agenda
-  - [ ] 7.5.2 Clareza de status
-  - [ ] 7.5.3 Acesso rápido às principais ações
+- [X] 7.3 Ajustar responsividade
+  - [X] 7.3.1 Mobile
+  - [X] 7.3.2 Tablet
+  - [X] 7.3.3 Desktop
+- [X] 7.4 Criar componente menu hambúrguer na versão mobile
+  - [X] 7.4.1 Com menu aberto, acrescentar desfoque no fundo para impedir interação com o conteúdo que não está visível
+  - [X] 7.4.2 Botões do cabeçalho devem ficar no menu hambúrguer
+- [X] 7.5 Revisão final de usabilidade
+  - [X] 7.5.1 Leitura da agenda
+  - [X] 7.5.2 Clareza de status
+  - [X] 7.5.3 Acesso rápido às principais ações
 
 ### Sprint 8 — Itens deixados para fases finais
 - [ ] 8.1 Docker
