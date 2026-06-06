@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  atom-barbearia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atom_barbearia_app
+    ports:
+      - "80:80"
+    restart: always
