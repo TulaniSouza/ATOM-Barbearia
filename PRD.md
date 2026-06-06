@@ -464,14 +464,14 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 7.5.2 Clareza de status
   - [X] 7.5.3 Acesso rápido às principais ações
 
-### Sprint 8 — Itens deixados para fases finais
-- [ ] 8.1 Docker
-  - [ ] 8.1.1 Avaliar necessidade
-  - [ ] 8.1.2 Criar containerização apenas quando houver valor real
-- [ ] 8.2 Testes
-  - [ ] 8.2.1 Definir escopo de testes unitários
-  - [ ] 8.2.2 Definir testes de integração
-  - [ ] 8.2.3 Implantar somente quando a base estiver estável
+### Sprint 8 — Itens deixados para fases finais [X]
+- [X] 8.1 Docker
+  - [X] 8.1.1 Avaliar necessidade
+  - [X] 8.1.2 Criar containerização apenas quando houver valor real
+- [X] 8.2 Testes
+  - [X] 8.2.1 Definir escopo de testes unitários
+  - [X] 8.2.2 Definir testes de integração
+  - [X] 8.2.3 Implantar somente quando a base estiver estável
 
 ## 14. Observações finais
 
