@@ -1,13 +1,34 @@
-import { useState } from 'react';
-import { mockWorkingHours, mockServices } from '../data/mockAgenda';
+import { useState, useEffect } from 'react';
+import ServiceTypeService from '../services/ServiceTypeService';
+import ScheduleService from '../services/ScheduleService';
 import '../styles/ConfigScreen.scss';
 
 const ConfigScreen = () => {
-  const [workingHours, setWorkingHours] = useState(mockWorkingHours);
-  const [services, setServices] = useState(mockServices);
+  const [services, setServices] = useState([]);
+  const [workingHours, setWorkingHours] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null); // 'hour' or 'service'
   const [editingItem, setEditingItem] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchServices = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await ServiceTypeService.getAllActive();
+      setServices(data);
+    } catch (err) {
+      setError("Erro ao carregar serviços.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   const handleAddHour = () => {
     setModalType('hour');
@@ -27,12 +48,19 @@ const ConfigScreen = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (type, id) => {
+  const handleDelete = async (type, id) => {
     if (window.confirm(`Tem certeza que deseja excluir este ${type === 'hour' ? 'horário' : 'serviço'}?`)) {
       if (type === 'hour') {
-        setWorkingHours(workingHours.filter(h => h.id !== id));
+        const newHours = workingHours.filter(h => h.id !== id);
+        setWorkingHours(newHours);
+        await ScheduleService.saveWorkingHours(newHours);
       } else {
-        setServices(services.filter(s => s.id !== id));
+        try {
+          await ServiceTypeService.deactivate(id);
+          fetchServices();
+        } catch (err) {
+          alert("Erro ao excluir serviço.");
+        }
       }
     }
   };
@@ -43,7 +71,7 @@ const ConfigScreen = () => {
     setModalType(null);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     
@@ -54,26 +82,45 @@ const ConfigScreen = () => {
         end: formData.get('end'),
       };
       
+      let newHours;
       if (editingItem) {
-        setWorkingHours(workingHours.map(h => h.id === editingItem.id ? newHour : h));
+        newHours = workingHours.map(h => h.id === editingItem.id ? newHour : h);
       } else {
-        setWorkingHours([...workingHours, newHour]);
+        newHours = [...workingHours, newHour];
       }
+      setWorkingHours(newHours);
+      await ScheduleService.saveWorkingHours(newHours);
+      closeModal();
     } else {
-      const newService = {
-        id: editingItem ? editingItem.id : Date.now(),
+      const durationStr = formData.get('duration');
+      const [hours, minutes] = durationStr.split(':').map(Number);
+      const durationInMinutes = (hours * 60) + minutes;
+
+      const serviceData = {
         name: formData.get('name'),
-        duration: formData.get('duration'),
-        price: formData.get('price'),
+        description: formData.get('description') || '',
+        price: Number(formData.get('price')),
+        durationInMinutes: durationInMinutes
       };
-      
-      if (editingItem) {
-        setServices(services.map(s => s.id === editingItem.id ? newService : s));
-      } else {
-        setServices([...services, newService]);
+
+      try {
+        if (editingItem) {
+          await ServiceTypeService.update(editingItem.id, serviceData);
+        } else {
+          await ServiceTypeService.create(serviceData);
+        }
+        fetchServices();
+        closeModal();
+      } catch (err) {
+        alert("Erro ao salvar serviço: " + (err.message || "Erro desconhecido"));
       }
     }
-    closeModal();
+  };
+
+  const formatDuration = (minutes) => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -124,11 +171,15 @@ const ConfigScreen = () => {
           </button>
         </div>
         <div className="items-list">
-          {services.map((service) => (
+          {isLoading ? (
+            <p className="loading-message">Carregando serviços...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : services.map((service) => (
             <div key={service.id} className="config-item service-item">
               <span className="service-name">{service.name}</span>
               <div className="service-details">
-                <span className="service-duration">{service.duration}</span>
+                <span className="service-duration">{formatDuration(service.durationInMinutes)}</span>
                 <span className="service-price">R$ {service.price}</span>
                 <div className="item-actions">
                   <button 
@@ -180,8 +231,12 @@ const ConfigScreen = () => {
                     <input type="text" id="name" name="name" defaultValue={editingItem?.name} placeholder="Ex: Corte Degradê" required />
                   </div>
                   <div className="form-group">
+                    <label htmlFor="description">Descrição</label>
+                    <input type="text" id="description" name="description" defaultValue={editingItem?.description} placeholder="Descrição opcional" />
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="duration">Duração (HH:MM)</label>
-                    <input type="text" id="duration" name="duration" defaultValue={editingItem?.duration} placeholder="00:30" required />
+                    <input type="text" id="duration" name="duration" defaultValue={editingItem ? formatDuration(editingItem.durationInMinutes) : ''} placeholder="00:30" required />
                   </div>
                   <div className="form-group">
                     <label htmlFor="price">Preço (R$)</label>

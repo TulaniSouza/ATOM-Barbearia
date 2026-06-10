@@ -1,92 +1,108 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Toast from './Toast';
+import AppointmentService from '../services/AppointmentService';
 import '../styles/RequestsScreen.scss';
 
-const RequestsScreen = ({ requests, setRequests }) => {
+const RequestsScreen = () => {
   const [filter, setFilter] = useState('Todas');
   const [dateFilter, setDateFilter] = useState('all'); // 'all', 'today', 'yesterday'
   const [toast, setToast] = useState(null);
   const [reschedulingId, setReschedulingId] = useState(null);
   const [newTime, setNewTime] = useState('');
   const [newDate, setNewDate] = useState('');
+  const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Helpers para datas
-  const getTodayStr = () => '02/06/2026'; // Mocked Today
-  const getYesterdayStr = () => '01/06/2026'; // Mocked Yesterday
-  
-  const handleAction = (id, action, client, extraData = {}) => {
-    let type = 'success';
-    let message = '';
-    let newStatus = 'resolved';
+  const getTodayStr = () => '2026-06-02'; 
+  const getYesterdayStr = () => '2026-06-01'; 
 
-    if (action === 'Confirmar') {
-      message = `Agendamento de ${client} confirmado com sucesso!`;
-      type = 'success';
-      newStatus = 'confirmed';
-    } else if (action === 'Recusar') {
-      message = `Agendamento de ${client} recusado.`;
-      type = 'error';
-      newStatus = 'rejected';
-    } else if (action === 'Remarcar') {
-      if (!extraData.time || !extraData.date) {
-        setReschedulingId(id);
-        setNewTime(requests.find(r => r.id === id)?.time || '');
-        setNewDate(requests.find(r => r.id === id)?.date.split('/').reverse().join('-') || '');
-        return;
-      }
-      const formattedDate = extraData.date.split('-').reverse().join('/');
-      message = `Solicitação de remarcação para ${formattedDate} às ${extraData.time} enviada para ${client}.`;
-      type = 'attention';
-      newStatus = 'rescheduled';
-    } else if (action === 'Finalizar') {
-      message = `Agendamento de ${client} finalizado!`;
-      type = 'success';
-      newStatus = 'finished';
+  const fetchAppointments = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await AppointmentService.getAll();
+      setAppointments(data);
+    } catch (err) {
+      setError("Erro ao carregar solicitações.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
-
-    setRequests(prev => prev.map(req => 
-      req.id === id ? { 
-        ...req, 
-        status: newStatus, 
-        time: extraData.time || req.time,
-        date: extraData.date ? extraData.date.split('-').reverse().join('/') : req.date 
-      } : req
-    ));
-
-    setReschedulingId(null);
-    setNewTime('');
-    setNewDate('');
-    setToast({ message, type });
   };
 
-  const filteredRequests = requests.filter(req => {
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+  
+  const handleAction = async (id, action, client, extraData = {}) => {
+    let type = 'success';
+    let message = '';
+
+    try {
+      if (action === 'Confirmar') {
+        // No Swagger não tem "confirmar", apenas agendamento já criado. 
+        // Vamos assumir que "SCHEDULED" é o estado inicial.
+        message = `Agendamento de ${client} confirmado (Simulado).`;
+        type = 'success';
+      } else if (action === 'Recusar') {
+        await AppointmentService.cancel(id);
+        message = `Agendamento de ${client} cancelado com sucesso.`;
+        type = 'error';
+      } else if (action === 'Finalizar') {
+        await AppointmentService.complete(id);
+        message = `Agendamento de ${client} finalizado com sucesso!`;
+        type = 'success';
+      } else if (action === 'Remarcar') {
+        if (!extraData.time || !extraData.date) {
+          setReschedulingId(id);
+          const appt = appointments.find(r => r.id === id);
+          setNewTime(appt?.appointmentTime || '');
+          setNewDate(appt?.appointmentDate || '');
+          return;
+        }
+        // A API não tem endpoint de remarcar direto no swagger (apenas create/complete/cancel)
+        // Por enquanto vamos simular ou emitir um alerta.
+        message = `Solicitação de remarcação para ${extraData.date} às ${extraData.time} enviada para ${client} (Simulado).`;
+        type = 'attention';
+      }
+
+      setReschedulingId(null);
+      setNewTime('');
+      setNewDate('');
+      setToast({ message, type });
+      fetchAppointments();
+    } catch (err) {
+      setToast({ message: "Erro ao realizar ação: " + (err.message || "Erro desconhecido"), type: 'error' });
+    }
+  };
+
+  const filteredRequests = appointments.filter(req => {
     // Filtro de Data
-    if (dateFilter === 'today' && req.date !== getTodayStr()) return false;
-    if (dateFilter === 'yesterday' && req.date !== getYesterdayStr()) return false;
+    if (dateFilter === 'today' && req.appointmentDate !== getTodayStr()) return false;
+    if (dateFilter === 'yesterday' && req.appointmentDate !== getYesterdayStr()) return false;
 
     // Filtro de Status
     if (filter === 'Todas') return true;
-    if (filter === 'Pendentes') return req.status === 'pending';
-    if (filter === 'Confirmadas') return req.status === 'confirmed';
-    if (filter === 'Recusadas') return req.status === 'rejected';
-    if (filter === 'Remarcadas') return req.status === 'rescheduled';
-    if (filter === 'Finalizadas') return req.status === 'finished';
+    if (filter === 'Pendentes') return req.status === 'SCHEDULED';
+    if (filter === 'Finalizadas') return req.status === 'COMPLETED';
+    if (filter === 'Recusadas') return req.status === 'CANCELLED';
     return true;
   });
 
   const stats = {
-    pending: requests.filter(req => req.status === 'pending').length,
-    confirmed: requests.filter(req => req.status === 'confirmed').length,
-    finished: requests.filter(req => req.status === 'finished').length,
-    total: requests.length
+    pending: appointments.filter(req => req.status === 'SCHEDULED').length,
+    finished: appointments.filter(req => req.status === 'COMPLETED').length,
+    cancelled: appointments.filter(req => req.status === 'CANCELLED').length,
+    total: appointments.length
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'confirmed': return <span className="status-badge confirmed">Confirmado</span>;
-      case 'rejected': return <span className="status-badge rejected">Recusado</span>;
-      case 'rescheduled': return <span className="status-badge rescheduled">Remarcado</span>;
-      case 'finished': return <span className="status-badge finished">Finalizado</span>;
+      case 'SCHEDULED': return <span className="status-badge pending">Agendado</span>;
+      case 'CANCELLED': return <span className="status-badge rejected">Cancelado</span>;
+      case 'COMPLETED': return <span className="status-badge finished">Finalizado</span>;
       default: return <span className="status-badge">Resolvido</span>;
     }
   };
@@ -151,22 +167,26 @@ const RequestsScreen = ({ requests, setRequests }) => {
       </div>
 
       <div className="requests-list">
-        {filteredRequests.map(req => (
+        {isLoading ? (
+          <p className="loading-message">Carregando solicitações...</p>
+        ) : error ? (
+          <p className="error-message">{error}</p>
+        ) : filteredRequests.map(req => (
           <article 
             key={req.id} 
-            className={`request-card ${req.status}`}
+            className={`request-card ${req.status.toLowerCase()}`}
           >
             <div className="request-info">
-              <h3>{req.service}</h3>
-              <div className="request-datetime">{req.date} • {req.time}</div>
-              <div className="request-client">{req.client}</div>
-              <div className={`request-note ${!req.note ? 'empty' : ''}`}>
-                {req.note || 'Sem observações'}
+              <h3>{req.serviceTypeName}</h3>
+              <div className="request-datetime">{req.appointmentDate} • {req.appointmentTime}</div>
+              <div className="request-client">{req.customerName}</div>
+              <div className="request-note empty">
+                Sem observações
               </div>
             </div>
 
             <div className="request-actions">
-              {req.status === 'pending' ? (
+              {req.status === 'SCHEDULED' ? (
                 reschedulingId === req.id ? (
                   <div className="reschedule-form">
                     <div className="input-group">
@@ -190,7 +210,7 @@ const RequestsScreen = ({ requests, setRequests }) => {
                     <div className="form-buttons">
                       <button 
                         className="btn-save-reschedule"
-                        onClick={() => handleAction(req.id, 'Remarcar', req.client, { time: newTime, date: newDate })}
+                        onClick={() => handleAction(req.id, 'Remarcar', req.customerName, { time: newTime, date: newDate })}
                       >
                         Enviar
                       </button>
@@ -206,19 +226,19 @@ const RequestsScreen = ({ requests, setRequests }) => {
                   <>
                     <button 
                       className="btn-confirm"
-                      onClick={() => handleAction(req.id, 'Confirmar', req.client)}
+                      onClick={() => handleAction(req.id, 'Confirmar', req.customerName)}
                     >
                       Confirmar
                     </button>
                     <button 
                       className="btn-reject"
-                      onClick={() => handleAction(req.id, 'Recusar', req.client)}
+                      onClick={() => handleAction(req.id, 'Recusar', req.customerName)}
                     >
                       Recusar
                     </button>
                     <button 
                       className="btn-reschedule"
-                      onClick={() => handleAction(req.id, 'Remarcar', req.client)}
+                      onClick={() => handleAction(req.id, 'Remarcar', req.customerName)}
                     >
                       Remarcar
                     </button>
@@ -227,20 +247,44 @@ const RequestsScreen = ({ requests, setRequests }) => {
               ) : (
                 <>
                   {getStatusBadge(req.status)}
-                  {req.status === 'confirmed' && (
+                  {req.status === 'SCHEDULED' && ( // Isso não vai acontecer por causa do if acima, mas mantendo a lógica se mudar
                     <button 
                       className="btn-finish-small"
-                      onClick={() => handleAction(req.id, 'Finalizar', req.client)}
+                      onClick={() => handleAction(req.id, 'Finalizar', req.customerName)}
                     >
                       Finalizar
                     </button>
                   )}
+                  {req.status === 'SCHEDULED' === false && req.status !== 'CANCELLED' && req.status !== 'COMPLETED' && (
+                     getStatusBadge(req.status)
+                  )}
+                  {req.status === 'SCHEDULED' || req.status === 'COMPLETED' || req.status === 'CANCELLED' ? null : getStatusBadge(req.status)}
+                  
+                  {/* Se estiver agendado (SCHEDULED), mostramos o botão de finalizar se for hoje/passado */}
+                  {req.status === 'SCHEDULED' && (
+                     <button 
+                        className="btn-finish-small"
+                        onClick={() => handleAction(req.id, 'Finalizar', req.customerName)}
+                      >
+                        Finalizar
+                      </button>
+                  )}
                 </>
+              )}
+              {/* Adicionando botão finalizar para agendados que não estão em remarcação */}
+              {req.status === 'SCHEDULED' && reschedulingId !== req.id && (
+                  <button 
+                    className="btn-finish-small"
+                    style={{marginTop: '10px'}}
+                    onClick={() => handleAction(req.id, 'Finalizar', req.customerName)}
+                  >
+                    Finalizar
+                  </button>
               )}
             </div>
           </article>
         ))}
-        {filteredRequests.length === 0 && (
+        {!isLoading && filteredRequests.length === 0 && (
           <p className="empty-message">Nenhuma solicitação encontrada para este filtro.</p>
         )}
       </div>

@@ -33,6 +33,51 @@
     }
   }
 
+  .selection-area {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+
+    .form-group {
+      flex: 1;
+      minWidth: 200px;
+
+      label {
+        display: block;
+        margin-bottom: 0.75rem;
+        color: $accent-gold;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      select, input[type="date"] {
+        width: 100%;
+        padding: 1rem;
+        background-color: $bg-card;
+        border: 1px solid $border-suttle;
+        color: $text-light;
+        border-radius: 8px;
+        font-family: $font-base;
+        font-size: 1rem;
+        transition: all 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: $accent-gold;
+          box-shadow: 0 0 0 2px rgba($accent-gold, 0.1);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
   .booking-card {
     background-color: $bg-card;
     border: 1px solid $border-suttle;

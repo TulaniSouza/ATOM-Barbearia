@@ -1,21 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/AppointmentForm.scss';
 
-const AppointmentForm = ({ onSave, onCancel }) => {
+const AppointmentForm = ({ onSave, onCancel, initialData = {}, services = [], isClient = false }) => {
   const [formData, setFormData] = useState({
-    client: '',
-    service: 'Corte Masculino',
-    barber: 'Qualquer Barbeiro',
-    time: '',
-    price: 80
+    client: initialData.client || '',
+    phone: initialData.phone || '',
+    serviceId: initialData.serviceId || (services.length > 0 ? services[0].id : ''),
+    time: initialData.time || '',
+    price: initialData.price || (services.length > 0 ? services[0].price : 0),
+    date: initialData.date || ''
   });
 
-  const barbers = [
-    "Qualquer Barbeiro",
-    "João (Especialista em Barba)",
-    "Lucas (Degradê & Estilo)",
-    "Marcos (Cortes Tradicionais)"
-  ];
+  useEffect(() => {
+    if (formData.serviceId) {
+      const selected = services.find(s => s.id === Number(formData.serviceId));
+      if (selected) {
+        setFormData(prev => ({ ...prev, price: selected.price }));
+      }
+    }
+  }, [formData.serviceId, services]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,8 +30,8 @@ const AppointmentForm = ({ onSave, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.client || !formData.time) {
-      alert('Por favor, preencha o cliente e o horário.');
+    if (!formData.client || !formData.time || !formData.serviceId) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
     onSave(formData);
@@ -41,44 +44,46 @@ const AppointmentForm = ({ onSave, onCancel }) => {
         
         <form onSubmit={handleSubmit} className="appointment-form">
           <div className="form-group">
-            <label htmlFor="client">Cliente</label>
+            <label htmlFor="client">{isClient ? 'Seu Nome' : 'Cliente'}</label>
             <input 
               type="text" 
               id="client" 
               name="client" 
               value={formData.client} 
               onChange={handleChange} 
-              placeholder="Nome do cliente"
+              placeholder={isClient ? 'Como podemos te chamar?' : 'Nome do cliente'}
               required 
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="service">Serviço</label>
-            <select 
-              id="service" 
-              name="service" 
-              value={formData.service} 
-              onChange={handleChange}
-            >
-              <option value="Corte Masculino">Corte Masculino</option>
-              <option value="Barba">Barba</option>
-              <option value="Corte + Barba">Corte + Barba</option>
-              <option value="Pezinho">Pezinho</option>
-            </select>
-          </div>
+          {isClient && (
+            <div className="form-group">
+              <label htmlFor="phone">WhatsApp</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                value={formData.phone} 
+                onChange={handleChange} 
+                placeholder="(00) 00000-0000"
+                required 
+              />
+            </div>
+          )}
 
           <div className="form-group">
-            <label htmlFor="barber">Barbeiro / Profissional</label>
+            <label htmlFor="serviceId">Serviço</label>
             <select 
-              id="barber" 
-              name="barber" 
-              value={formData.barber} 
+              id="serviceId" 
+              name="serviceId" 
+              value={formData.serviceId} 
               onChange={handleChange}
+              required
             >
-              {barbers.map(b => (
-                <option key={b} value={b}>{b}</option>
+              {services.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
               ))}
+              {services.length === 0 && <option value="">Nenhum serviço disponível</option>}
             </select>
           </div>
 
@@ -95,16 +100,18 @@ const AppointmentForm = ({ onSave, onCancel }) => {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="price">Valor (R$)</label>
-              <input 
-                type="number" 
-                id="price" 
-                name="price" 
-                value={formData.price} 
-                onChange={handleChange} 
-              />
-            </div>
+            {!isClient && (
+              <div className="form-group">
+                <label htmlFor="price">Valor (R$)</label>
+                <input 
+                  type="number" 
+                  id="price" 
+                  name="price" 
+                  value={formData.price} 
+                  onChange={handleChange} 
+                />
+              </div>
+            )}
           </div>
 
           <div className="form-actions">
@@ -112,7 +119,7 @@ const AppointmentForm = ({ onSave, onCancel }) => {
               Cancelar
             </button>
             <button type="submit" className="btn-save">
-              Salvar Agendamento
+              {isClient ? 'Solicitar Horário' : 'Salvar Agendamento'}
             </button>
           </div>
         </form>

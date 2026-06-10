@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/Login.scss';
 import logoImg from '../assets/ATOM.png';
+import AuthService from '../services/AuthService';
 
 export default function Login({ onLoginSuccess, setPendingAppointments }) {
   const [activeTab, setActiveTab] = useState('login');
@@ -9,6 +10,8 @@ export default function Login({ onLoginSuccess, setPendingAppointments }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('customer');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -25,16 +28,35 @@ export default function Login({ onLoginSuccess, setPendingAppointments }) {
 
   const sanitizeInput = (text) => text.replace(/<[^>]*>/g, '').trim();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      email: sanitizeInput(email),
-      name: activeTab === 'cadastrar' ? sanitizeInput(name) : 'Cliente Hora Marcada',
-      phone: activeTab === 'cadastrar' ? sanitizeInput(phone) : 'N/A',
-      role: role,
-      isAuthenticated: true
-    };
-    onLoginSuccess(payload);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      if (activeTab === 'login') {
+        const data = await AuthService.login({ email, password });
+        onLoginSuccess({
+          id: data.barberId,
+          name: data.name,
+          email: data.email,
+          role: 'barber'
+        });
+      } else {
+        await AuthService.register({
+          name: sanitizeInput(name),
+          email: sanitizeInput(email),
+          password
+        });
+        // Após registro bem sucedido, tenta logar ou muda para aba login
+        setActiveTab('login');
+        alert('Cadastro realizado com sucesso! Faça login para continuar.');
+      }
+    } catch (err) {
+      setError(err.message || 'Ocorreu um erro ao processar sua solicitação.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSendMessage = (e) => {
@@ -83,15 +105,13 @@ export default function Login({ onLoginSuccess, setPendingAppointments }) {
         </div>
 
         <form onSubmit={handleSubmit}>
+          {error && <div className="error-message" style={{ color: '#ff4d4d', marginBottom: '1rem', textAlign: 'center', fontSize: '14px' }}>{error}</div>}
+          
           {activeTab === 'cadastrar' && (
             <>
               <div className="form-group">
                 <label>Nome Completo</label>
                 <input type="text" placeholder="Ex: Carlos Silva" value={name} onChange={(e) => setName(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label>WhatsApp</label>
-                <input type="tel" placeholder="Ex: (11) 99999-9999" value={phone} onChange={(e) => setPhone(e.target.value)} required />
               </div>
             </>
           )}
@@ -106,16 +126,8 @@ export default function Login({ onLoginSuccess, setPendingAppointments }) {
             <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
 
-          <div className="form-group">
-            <label>Tipo de Conta</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="customer">Cliente</option>
-              <option value="barber">Barbeiro</option>
-            </select>
-          </div>
-
-          <button type="submit" className="submit-btn">
-            {activeTab === 'login' ? 'Login' : 'Cadastrar'}
+          <button type="submit" className="submit-btn" disabled={isLoading}>
+            {isLoading ? 'Carregando...' : (activeTab === 'login' ? 'Login' : 'Cadastrar')}
           </button>
         </form>
       </div>

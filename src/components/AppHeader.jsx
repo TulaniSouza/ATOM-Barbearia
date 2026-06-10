@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/AppHeader.scss';
 
-const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount }) => {
+const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount, isPublicClient }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isBarber = user?.role === 'barber';
 
@@ -34,6 +34,8 @@ const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount }
     { id: 'daily', label: 'Dia', icon: 'calendar_today' },
     { id: 'requests', label: 'Solicitações', icon: 'notifications', badge: pendingCount },
     { id: 'config', label: 'Ajustes', icon: 'settings' },
+  ] : isPublicClient ? [
+    { id: 'client_dashboard', label: 'Agendamento', icon: 'event' },
   ] : [
     { id: 'client_dashboard', label: 'Início', icon: 'home' },
   ];
@@ -85,12 +87,14 @@ const AppHeader = ({ currentView, setCurrentView, user, onLogout, pendingCount }
           </nav>
 
           <div className="user-section">
-            <div className="user-info">
-              <div className="user-avatar">{getInitials(user?.name || user?.email || 'User')}</div>
-              <span className="user-name">{(user?.name || user?.email || 'usuário').toLowerCase().split('@')[0]}</span>
-            </div>
+            {!isPublicClient && user ? (
+              <div className="user-info">
+                <div className="user-avatar">{getInitials(user?.name || user?.email || 'User')}</div>
+                <span className="user-name">{(user?.name || user?.email || 'usuário').toLowerCase().split('@')[0]}</span>
+              </div>
+            ) : null}
             <button className="logout-btn" onClick={onLogout}>
-              Sair
+              {isPublicClient ? 'Sair' : 'Sair'}
             </button>
           </div>
         </div>

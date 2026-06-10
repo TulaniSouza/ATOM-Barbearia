@@ -14,6 +14,8 @@ O sistema reúne em uma única aplicação:
 
 O produto será desenvolvido em React com SCSS, sem Docker e sem testes na fase inicial. A base visual atual do projeto já adota tema escuro, botões de destaque em verde, estados de atenção em vermelho, cards escuros e tipografia com forte presença visual.
 
+Nesta nova fase, o front-end será integrado a uma API Java dockerizada por meio de uma camada de serviços orientada a classes, com Axios como cliente HTTP central e uma classe base reutilizável para padronizar chamadas, autenticação, tratamento de erro e expansão futura para novas APIs.
+
 ## 2.1 Escopo da semana — POC técnica
 
 Para esta semana, o foco do projeto deve ser uma POC técnica, seguindo a linha do documento de validação. O objetivo não é fechar o produto final, mas provar com código que a solução pode ser construída de forma viável.
@@ -140,6 +142,18 @@ flowchart TD
     N --> T[Atualizar disponibilidade]
 ```
 
+### 6.10 Integração com a API Java
+- O sistema deve consumir a API Java por meio de uma camada de serviços em JavaScript baseada em classes.
+- A aplicação deve centralizar a comunicação HTTP em um cliente Axios único ou em uma fábrica de clientes compatível com múltiplas APIs no futuro.
+- Deve existir uma classe base responsável por concentrar regras compartilhadas de integração, como baseURL, headers padrão, token bearer, timeout e tratamento de erros.
+- Cada entidade da API deve ter uma classe própria com métodos coerentes com suas operações, evitando lógica de request espalhada pelos componentes.
+- O fluxo de autenticação deve armazenar o token JWT após login e reutilizá-lo nas demais chamadas protegidas.
+- A interface deve refletir estados de carregamento, erro, vazio, sucesso e não autorizado sempre que houver comunicação com a API.
+- As telas devem consumir dados reais da API sempre que possível, mantendo dados mockados apenas como apoio inicial, fallback de desenvolvimento ou estado visual temporário.
+- Os nomes dos métodos e classes devem seguir a semântica do domínio, como Auth, ServiceType, Appointment, Schedule e BarberSchedule.
+- O tratamento de retorno da API deve mapear os DTOs recebidos para estruturas fáceis de consumir pela interface.
+- A implementação deve prever expansão futura para uma segunda API sem exigir reescrita completa da camada de acesso a dados.
+
 ## 7. Requisitos não-funcionais
 
 - O sistema deve ser responsivo e funcionar bem em mobile primeiro.
@@ -179,6 +193,20 @@ flowchart TD
 - `src/App.jsx` para composição de rotas ou telas principais
 - `main.jsx` para bootstrap do app
 - Reutilização obrigatória dos arquivos já presentes na base, como `Login.jsx` e `src/styles/_mixins.scss`, antes de qualquer criação nova de estrutura global
+
+### 8.4 Camada de integração com a API
+- Criar uma pasta dedicada para integração com API, separada de componentes visuais e páginas.
+- Criar uma classe base de serviço para concentrar:
+  - instância do Axios;
+  - configuração de `baseURL` por variável de ambiente;
+  - serialização de parâmetros de query;
+  - envio automático do token `Bearer`;
+  - normalização de erros de rede e de validação.
+- Criar classes especializadas por entidade, cada uma herdando da base comum e expondo apenas os métodos do domínio.
+- Organizar o código de integração em módulos por responsabilidade, evitando um arquivo único com toda a lógica HTTP.
+- Manter componentes React responsáveis apenas por renderização, estado local e disparo das chamadas de serviço.
+- Definir um ponto único para leitura, gravação e remoção do token de autenticação.
+- Prever um comportamento padrão para respostas vazias, falhas de autenticação e indisponibilidade da API.
 
 ## 9. Design system
 
@@ -473,6 +501,55 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 8.2.2 Definir testes de integração
   - [X] 8.2.3 Implantar somente quando a base estiver estável
 
+### Sprint 9 — Integração front-end com a API Java [X]
+- [X] 9.1 Criar a base de integração HTTP
+  - [X] 9.1.1 Definir a variável de ambiente da API base URL
+  - [X] 9.1.2 Criar uma classe base para encapsular a instância do Axios
+  - [X] 9.1.3 Configurar headers padrão, timeout e serialização de query params
+  - [X] 9.1.4 Implementar interceptors para anexar o token JWT automaticamente
+  - [X] 9.1.5 Padronizar o tratamento de erros de rede, validação e autorização
+- [X] 9.2 Estruturar as classes de domínio da API
+  - [X] 9.2.1 Criar a classe de autenticação com login e registro
+  - [X] 9.2.2 Criar a classe de tipos de serviço com listagem, consulta, criação, edição e desativação
+  - [X] 9.2.3 Criar a classe de agendamentos com listagem, criação, conclusão, cancelamento e busca por data
+  - [X] 9.2.4 Criar a classe de horários da agenda com consulta da agenda do barbeiro e horários disponíveis
+  - [X] 9.2.5 Definir convenções de nomes para métodos síncronos, assíncronos e utilitários de apoio
+- [X] 9.3 Integrar autenticação com persistência de sessão
+  - [X] 9.3.1 Enviar credenciais de login para a API e tratar a resposta de token
+  - [X] 9.3.2 Armazenar token, tipo do token e dados básicos do usuário em local storage ou estrutura equivalente
+  - [X] 9.3.3 Reaplicar autenticação nas requisições subsequentes
+  - [X] 9.3.4 Tratar logout e expiração de sessão
+  - [X] 9.3.5 Bloquear navegação autenticada quando não houver token válido
+- [X] 9.4 Substituir dados mockados por consumo real
+  - [X] 9.4.1 Trocar os dados da agenda mensal por respostas reais da API
+  - [X] 9.4.2 Trocar os dados da agenda do dia por respostas reais da API
+  - [X] 9.4.3 Trocar as solicitações por dados vindos da API
+  - [X] 9.4.4 Trocar a tela de configurações por dados reais de horários e serviços
+  - [X] 9.4.5 Manter fallback visual apenas para estados sem dados ou indisponibilidade temporária
+- [X] 9.5 Mapear DTOs da API para o front-end
+  - [X] 9.5.1 Criar funções de adaptação entre resposta da API e modelo consumido pela UI
+  - [X] 9.5.2 Padronizar campos como nome do cliente, data, horário, status e valor
+  - [X] 9.5.3 Tratar diferenças entre nomes de propriedades do back-end e do front-end
+  - [X] 9.5.4 Reutilizar os mesmos mapeadores em todas as telas para evitar inconsistência
+- [X] 9.6 Tratar estados de interface ligados à integração
+  - [X] 9.6.1 Exibir estado de carregamento ao buscar dados
+  - [X] 9.6.2 Exibir mensagem amigável quando a API retornar vazio
+  - [X] 9.6.3 Exibir feedback claro para erros 400, 401, 403 e 500
+  - [X] 9.6.4 Exibir feedback de sucesso após ações como criar, concluir ou cancelar
+  - [X] 9.6.5 Manter a interface utilizável mesmo quando houver falha parcial em uma área
+- [X] 9.7 Integrar as telas principais ao novo serviço
+  - [X] 9.7.1 Conectar login ao serviço de autenticação
+  - [X] 9.7.2 Conectar dashboard ao serviço de agenda resumida
+  - [X] 9.7.3 Conectar agenda mensal ao serviço de agenda por data
+  - [X] 9.7.4 Conectar agenda do dia ao serviço de agendamentos por data
+  - [X] 9.7.5 Conectar solicitações às ações de confirmar, recusar e remarcar
+  - [X] 9.7.6 Conectar configurações às ações de listar e gerenciar serviços e horários
+- [X] 9.8 Validar a integração de ponta a ponta
+  - [X] 9.8.1 Testar autenticação com a API em ambiente local
+  - [X] 9.8.2 Testar chamadas protegidas com token válido
+  - [X] 9.8.3 Testar comportamento sem token ou com token inválido
+  - [X] 9.8.4 Validar o contrato dos endpoints descritos no Swagger
+  - [X] 9.8.5 Conferir se a experiência visual permanece consistente após a troca do mock pela API
 ## 14. Observações finais
 
 O MVP deve permanecer focado na dor principal: organizar agendamentos e tornar a agenda fácil de entender. Funcionalidades como finanças, fiado, fila manual e automações avançadas devem ficar para futuras iterações.
