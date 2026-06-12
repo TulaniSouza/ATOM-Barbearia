@@ -1,0 +1,137 @@
+@import 'variables'; 
+@import 'mixins'; 
+
+.wizard-container {
+  background-color: $bg-dark;
+  min-height: 100vh;
+  font-family: $font-base;
+  color: $text-light;
+  padding: 20px;
+  padding-bottom: 100px; 
+  box-sizing: border-box;
+
+  .step-content {
+    max-width: 420px;
+    margin: 0 auto;
+
+    h2 {
+      font-family: $font-display;
+      color: $accent-gold;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      color: $text-muted;
+      font-size: 1rem;
+      margin: 20px 0 10px;
+      text-align: left;
+    }
+  }
+
+  .vertical-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+
+    .list-item {
+      background-color: $bg-item;
+      border: 1px solid $border-suttle;
+      color: $text-light;
+      padding: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s ease;
+      font-size: 14px;
+
+      &:hover {
+        border-color: $accent-gold;
+      }
+
+      &.active {
+        background-color: $bg-card;
+        border-color: $accent-gold;
+        color: $accent-gold;
+        font-weight: bold;
+        box-shadow: 0 0 10px rgba($accent-gold, 0.2);
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      background-color: $bg-item;
+      border: 1px solid $border-suttle;
+      border-radius: 6px;
+      color: $text-light;
+      &:focus {
+        outline: none;
+        border-color: $accent-gold;
+      }
+    }
+  }
+
+  .summary-card {
+    background-color: $bg-card;
+    border: 1px solid $border-suttle;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+
+    p {
+      color: $text-muted;
+      font-size: 14px;
+      margin: 8px 0;
+      strong {
+        color: $accent-gold;
+      }
+    }
+  }
+
+  .wizard-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background-color: $bg-dark;
+    border-top: 1px solid $border-suttle;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    box-sizing: border-box;
+
+    button {
+      padding: 12px 25px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+
+      &.prev-btn {
+        background: transparent;
+        color: $text-muted;
+        border: 1px solid $border-suttle;
+      }
+
+      &.next-btn {
+        @include primary-btn($accent-gold, #000000);
+        flex: 1;
+        
+        &:disabled {
+          background-color: $border-suttle;
+          color: $text-low;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

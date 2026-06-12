@@ -14,6 +14,8 @@ O sistema reúne em uma única aplicação:
 
 O produto será desenvolvido em React com SCSS, sem Docker e sem testes na fase inicial. A base visual atual do projeto já adota tema escuro, botões de destaque em verde, estados de atenção em vermelho, cards escuros e tipografia com forte presença visual.
 
+Nesta nova fase, o front-end será integrado a uma API Java dockerizada por meio de uma camada de serviços orientada a classes, com Axios como cliente HTTP central e uma classe base reutilizável para padronizar chamadas, autenticação, tratamento de erro e expansão futura para novas APIs.
+
 ## 2.1 Escopo da semana — POC técnica
 
 Para esta semana, o foco do projeto deve ser uma POC técnica, seguindo a linha do documento de validação. O objetivo não é fechar o produto final, mas provar com código que a solução pode ser construída de forma viável.
@@ -140,6 +142,18 @@ flowchart TD
     N --> T[Atualizar disponibilidade]
 ```
 
+### 6.10 Integração com a API Java
+- O sistema deve consumir a API Java por meio de uma camada de serviços em JavaScript baseada em classes.
+- A aplicação deve centralizar a comunicação HTTP em um cliente Axios único ou em uma fábrica de clientes compatível com múltiplas APIs no futuro.
+- Deve existir uma classe base responsável por concentrar regras compartilhadas de integração, como baseURL, headers padrão, token bearer, timeout e tratamento de erros.
+- Cada entidade da API deve ter uma classe própria com métodos coerentes com suas operações, evitando lógica de request espalhada pelos componentes.
+- O fluxo de autenticação deve armazenar o token JWT após login e reutilizá-lo nas demais chamadas protegidas.
+- A interface deve refletir estados de carregamento, erro, vazio, sucesso e não autorizado sempre que houver comunicação com a API.
+- As telas devem consumir dados reais da API sempre que possível, mantendo dados mockados apenas como apoio inicial, fallback de desenvolvimento ou estado visual temporário.
+- Os nomes dos métodos e classes devem seguir a semântica do domínio, como Auth, ServiceType, Appointment, Schedule e BarberSchedule.
+- O tratamento de retorno da API deve mapear os DTOs recebidos para estruturas fáceis de consumir pela interface.
+- A implementação deve prever expansão futura para uma segunda API sem exigir reescrita completa da camada de acesso a dados.
+
 ## 7. Requisitos não-funcionais
 
 - O sistema deve ser responsivo e funcionar bem em mobile primeiro.
@@ -179,6 +193,20 @@ flowchart TD
 - `src/App.jsx` para composição de rotas ou telas principais
 - `main.jsx` para bootstrap do app
 - Reutilização obrigatória dos arquivos já presentes na base, como `Login.jsx` e `src/styles/_mixins.scss`, antes de qualquer criação nova de estrutura global
+
+### 8.4 Camada de integração com a API
+- Criar uma pasta dedicada para integração com API, separada de componentes visuais e páginas.
+- Criar uma classe base de serviço para concentrar:
+  - instância do Axios;
+  - configuração de `baseURL` por variável de ambiente;
+  - serialização de parâmetros de query;
+  - envio automático do token `Bearer`;
+  - normalização de erros de rede e de validação.
+- Criar classes especializadas por entidade, cada uma herdando da base comum e expondo apenas os métodos do domínio.
+- Organizar o código de integração em módulos por responsabilidade, evitando um arquivo único com toda a lógica HTTP.
+- Manter componentes React responsáveis apenas por renderização, estado local e disparo das chamadas de serviço.
+- Definir um ponto único para leitura, gravação e remoção do token de autenticação.
+- Prever um comportamento padrão para respostas vazias, falhas de autenticação e indisponibilidade da API.
 
 ## 9. Design system
 
@@ -388,91 +416,140 @@ Mitigação: organizar pastas, nomes e componentes desde a primeira implementaç
   - [X] 3.4.1 Botão principal
   - [X] 3.4.2 Botão de visualização diária
 
-### Sprint 4 — Agenda do dia
-- [ ] 4.1 Criar lista diária de agendamentos
-  - [ ] 4.1.1 Linha de horário
-  - [ ] 4.1.2 Nome do serviço
-  - [ ] 4.1.3 Nome do cliente
-  - [ ] 4.1.4 Badge de status
-- [ ] 4.2 Implementar filtro por status
-  - [ ] 4.2.1 Aba Todos
-  - [ ] 4.2.2 Aba Confirmados
-  - [ ] 4.2.3 Aba Pendentes
-- [ ] 4.3 Separar estados visuais
-  - [ ] 4.3.1 Confirmado
-  - [ ] 4.3.2 Pendente
-  - [ ] 4.3.3 Cancelado
-- [ ] 4.4 Adicionar ações de criação
-  - [ ] 4.4.1 Botão de novo agendamento
-  - [ ] 4.4.2 Abertura de formulário simples
+### Sprint 4 — Agenda do dia [X]
+- [X] 4.1 Criar lista diária de agendamentos
+  - [X] 4.1.1 Linha de horário
+  - [X] 4.1.2 Nome do serviço
+  - [X] 4.1.3 Nome do cliente
+  - [X] 4.1.4 Badge de status
+- [X] 4.2 Implementar filtro por status
+  - [X] 4.2.1 Aba Todos
+  - [X] 4.2.2 Aba Confirmados
+  - [X] 4.2.3 Aba Pendentes
+- [X] 4.3 Separar estados visuais
+  - [X] 4.3.1 Confirmado
+  - [X] 4.3.2 Pendente
+  - [X] 4.3.3 Cancelado
+- [X] 4.4 Adicionar ações de criação
+  - [X] 4.4.1 Botão de novo agendamento
+  - [X] 4.4.2 Abertura de formulário simples
 
-### Sprint 5 — Solicitações
-- [ ] 5.1 Criar tela de solicitações
-  - [ ] 5.1.1 Cabeçalho da seção
-  - [ ] 5.1.2 Contagem de pendentes e total
-  - [ ] 5.1.3 Filtro de status
-- [ ] 5.2 Criar card de solicitação
-  - [ ] 5.2.1 Serviço
-  - [ ] 5.2.2 Data e horário
-  - [ ] 5.2.3 Cliente
-  - [ ] 5.2.4 Observação
-- [ ] 5.3 Criar ações do barbeiro
-  - [ ] 5.3.1 Confirmar solicitação
-  - [ ] 5.3.2 Recusar solicitação
-  - [ ] 5.3.3 Remarcar solicitação
-- [ ] 5.4 Padronizar feedback visual
-  - [ ] 5.4.1 Sucesso
-  - [ ] 5.4.2 Erro
-  - [ ] 5.4.3 Atenção
+### Sprint 5 — Solicitações [X]
+- [X] 5.1 Criar tela de solicitações
+  - [X] 5.1.1 Cabeçalho da seção
+  - [X] 5.1.2 Contagem de pendentes e total
+  - [X] 5.1.3 Filtro de status
+- [X] 5.2 Criar card de solicitação
+  - [X] 5.2.1 Serviço
+  - [X] 5.2.2 Data e horário
+  - [X] 5.2.3 Cliente
+  - [X] 5.2.4 Observação
+- [X] 5.3 Criar ações do barbeiro
+  - [X] 5.3.1 Confirmar solicitação
+  - [X] 5.3.2 Recusar solicitação
+  - [X] 5.3.3 Remarcar solicitação
+- [X] 5.4 Padronizar feedback visual
+  - [X] 5.4.1 Sucesso
+  - [X] 5.4.2 Erro
+  - [X] 5.4.3 Atenção
 
-### Sprint 6 — Configurações
-- [ ] 6.1 Criar tela de horários
-  - [ ] 6.1.1 Lista de blocos de horário
-  - [ ] 6.1.2 Ação de editar
-  - [ ] 6.1.3 Ação de remover
-- [ ] 6.2 Criar seção de serviços
-  - [ ] 6.2.1 Lista de serviços
-  - [ ] 6.2.2 Duração do serviço
-  - [ ] 6.2.3 Preço do serviço
-  - [ ] 6.2.4 Ação de adicionar serviço
-- [ ] 6.3 Padronizar formulários
-  - [ ] 6.3.1 Inputs
-  - [ ] 6.3.2 Selects
-  - [ ] 6.3.3 Botões de ação
-- [ ] 6.4 Organizar dados mockados
-  - [ ] 6.4.1 Horários
-  - [ ] 6.4.2 Serviços
-  - [ ] 6.4.3 Solicitações
+### Sprint 6 — Configurações [X]
+- [X] 6.1 Criar tela de horários
+  - [X] 6.1.1 Lista de blocos de horário
+  - [X] 6.1.2 Ação de editar
+  - [X] 6.1.3 Ação de remover
+- [X] 6.2 Criar seção de serviços
+  - [X] 6.2.1 Lista de serviços
+  - [X] 6.2.2 Duração do serviço
+  - [X] 6.2.3 Preço do serviço
+  - [X] 6.2.4 Ação de adicionar serviço
+- [X] 6.3 Padronizar formulários
+  - [X] 6.3.1 Inputs
+  - [X] 6.3.2 Selects
+  - [X] 6.3.3 Botões de ação
+- [X] 6.4 Organizar dados mockados
+  - [X] 6.4.1 Horários
+  - [X] 6.4.2 Serviços
+  - [X] 6.4.3 Solicitações
 
-### Sprint 7 — Integração e acabamento
-- [ ] 7.1 Reaproveitar componentes comuns
-  - [ ] 7.1.1 Evitar duplicação de header
-  - [ ] 7.1.2 Ajustar imports e nomes
-- [ ] 7.2 Garantir consistência de conteúdo
-  - [ ] 7.2.1 Manter código em inglês
-  - [ ] 7.2.2 Manter textos da UI em português
-  - [ ] 7.2.3 Revisar microcopy
-- [ ] 7.3 Ajustar responsividade
-  - [ ] 7.3.1 Mobile
-  - [ ] 7.3.2 Tablet
-  - [ ] 7.3.3 Desktop
-- [ ] 7.4 Criar componente menu hambúrguer na versão mobile
-  - [ ] 7.4.1 Com menu aberto, acrescentar desfoque no fundo para impedir interação com o conteúdo que não está visível
-  - [ ] 7.4.2 Botões do cabeçalho devem ficar no menu hambúrguer
-- [ ] 7.5 Revisão final de usabilidade
-  - [ ] 7.5.1 Leitura da agenda
-  - [ ] 7.5.2 Clareza de status
-  - [ ] 7.5.3 Acesso rápido às principais ações
+### Sprint 7 — Integração e acabamento [X]
+- [X] 7.1 Reaproveitar componentes comuns
+  - [X] 7.1.1 Evitar duplicação de header
+  - [X] 7.1.2 Ajustar imports e nomes
+- [X] 7.2 Garantir consistência de conteúdo
+  - [X] 7.2.1 Manter código em inglês
+  - [X] 7.2.2 Manter textos da UI em português
+  - [X] 7.2.3 Revisar microcopy
+- [X] 7.3 Ajustar responsividade
+  - [X] 7.3.1 Mobile
+  - [X] 7.3.2 Tablet
+  - [X] 7.3.3 Desktop
+- [X] 7.4 Criar componente menu hambúrguer na versão mobile
+  - [X] 7.4.1 Com menu aberto, acrescentar desfoque no fundo para impedir interação com o conteúdo que não está visível
+  - [X] 7.4.2 Botões do cabeçalho devem ficar no menu hambúrguer
+- [X] 7.5 Revisão final de usabilidade
+  - [X] 7.5.1 Leitura da agenda
+  - [X] 7.5.2 Clareza de status
+  - [X] 7.5.3 Acesso rápido às principais ações
 
-### Sprint 8 — Itens deixados para fases finais
-- [ ] 8.1 Docker
-  - [ ] 8.1.1 Avaliar necessidade
-  - [ ] 8.1.2 Criar containerização apenas quando houver valor real
-- [ ] 8.2 Testes
-  - [ ] 8.2.1 Definir escopo de testes unitários
-  - [ ] 8.2.2 Definir testes de integração
-  - [ ] 8.2.3 Implantar somente quando a base estiver estável
+### Sprint 8 — Itens deixados para fases finais [X]
+- [X] 8.1 Docker
+  - [X] 8.1.1 Avaliar necessidade
+  - [X] 8.1.2 Criar containerização apenas quando houver valor real
+- [X] 8.2 Testes
+  - [X] 8.2.1 Definir escopo de testes unitários
+  - [X] 8.2.2 Definir testes de integração
+  - [X] 8.2.3 Implantar somente quando a base estiver estável
 
+### Sprint 9 — Integração front-end com a API Java [X]
+- [X] 9.1 Criar a base de integração HTTP
+  - [X] 9.1.1 Definir a variável de ambiente da API base URL
+  - [X] 9.1.2 Criar uma classe base para encapsular a instância do Axios
+  - [X] 9.1.3 Configurar headers padrão, timeout e serialização de query params
+  - [X] 9.1.4 Implementar interceptors para anexar o token JWT automaticamente
+  - [X] 9.1.5 Padronizar o tratamento de erros de rede, validação e autorização
+- [X] 9.2 Estruturar as classes de domínio da API
+  - [X] 9.2.1 Criar a classe de autenticação com login e registro
+  - [X] 9.2.2 Criar a classe de tipos de serviço com listagem, consulta, criação, edição e desativação
+  - [X] 9.2.3 Criar a classe de agendamentos com listagem, criação, conclusão, cancelamento e busca por data
+  - [X] 9.2.4 Criar a classe de horários da agenda com consulta da agenda do barbeiro e horários disponíveis
+  - [X] 9.2.5 Definir convenções de nomes para métodos síncronos, assíncronos e utilitários de apoio
+- [X] 9.3 Integrar autenticação com persistência de sessão
+  - [X] 9.3.1 Enviar credenciais de login para a API e tratar a resposta de token
+  - [X] 9.3.2 Armazenar token, tipo do token e dados básicos do usuário em local storage ou estrutura equivalente
+  - [X] 9.3.3 Reaplicar autenticação nas requisições subsequentes
+  - [X] 9.3.4 Tratar logout e expiração de sessão
+  - [X] 9.3.5 Bloquear navegação autenticada quando não houver token válido
+- [X] 9.4 Substituir dados mockados por consumo real
+  - [X] 9.4.1 Trocar os dados da agenda mensal por respostas reais da API
+  - [X] 9.4.2 Trocar os dados da agenda do dia por respostas reais da API
+  - [X] 9.4.3 Trocar as solicitações por dados vindos da API
+  - [X] 9.4.4 Trocar a tela de configurações por dados reais de horários e serviços
+  - [X] 9.4.5 Manter fallback visual apenas para estados sem dados ou indisponibilidade temporária
+- [X] 9.5 Mapear DTOs da API para o front-end
+  - [X] 9.5.1 Criar funções de adaptação entre resposta da API e modelo consumido pela UI
+  - [X] 9.5.2 Padronizar campos como nome do cliente, data, horário, status e valor
+  - [X] 9.5.3 Tratar diferenças entre nomes de propriedades do back-end e do front-end
+  - [X] 9.5.4 Reutilizar os mesmos mapeadores em todas as telas para evitar inconsistência
+- [X] 9.6 Tratar estados de interface ligados à integração
+  - [X] 9.6.1 Exibir estado de carregamento ao buscar dados
+  - [X] 9.6.2 Exibir mensagem amigável quando a API retornar vazio
+  - [X] 9.6.3 Exibir feedback claro para erros 400, 401, 403 e 500
+  - [X] 9.6.4 Exibir feedback de sucesso após ações como criar, concluir ou cancelar
+  - [X] 9.6.5 Manter a interface utilizável mesmo quando houver falha parcial em uma área
+- [X] 9.7 Integrar as telas principais ao novo serviço
+  - [X] 9.7.1 Conectar login ao serviço de autenticação
+  - [X] 9.7.2 Conectar dashboard ao serviço de agenda resumida
+  - [X] 9.7.3 Conectar agenda mensal ao serviço de agenda por data
+  - [X] 9.7.4 Conectar agenda do dia ao serviço de agendamentos por data
+  - [X] 9.7.5 Conectar solicitações às ações de confirmar, recusar e remarcar
+  - [X] 9.7.6 Conectar configurações às ações de listar e gerenciar serviços e horários
+- [X] 9.8 Validar a integração de ponta a ponta
+  - [X] 9.8.1 Testar autenticação com a API em ambiente local
+  - [X] 9.8.2 Testar chamadas protegidas com token válido
+  - [X] 9.8.3 Testar comportamento sem token ou com token inválido
+  - [X] 9.8.4 Validar o contrato dos endpoints descritos no Swagger
+  - [X] 9.8.5 Conferir se a experiência visual permanece consistente após a troca do mock pela API
 ## 14. Observações finais
 
 O MVP deve permanecer focado na dor principal: organizar agendamentos e tornar a agenda fácil de entender. Funcionalidades como finanças, fiado, fila manual e automações avançadas devem ficar para futuras iterações.

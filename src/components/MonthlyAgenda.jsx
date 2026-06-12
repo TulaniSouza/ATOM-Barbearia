@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { mockAgenda } from '../data/mockAgenda';
+import { useState, useEffect, useMemo } from 'react';
+import AppointmentService from '../services/AppointmentService';
 import '../styles/MonthlyAgenda.scss';
 
 /**
@@ -9,6 +9,9 @@ import '../styles/MonthlyAgenda.scss';
 const MonthlyAgenda = () => {
   // Estado para o mês e ano exibidos (Inicializa em Maio de 2026 conforme requisito)
   const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 1));
+  const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const monthNames = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -20,6 +23,28 @@ const MonthlyAgenda = () => {
 
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
+
+  // Buscar agendamentos da API
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // Como a API não tem um "buscar por mês" direto que retorne tudo,
+        // vamos usar o listagem geral ou buscar por data se necessário.
+        // O swagger mostra /api/appointments que lista todos.
+        const data = await AppointmentService.getAll();
+        setAppointments(data);
+      } catch (err) {
+        setError("Erro ao carregar agendamentos.");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, [currentMonth, currentYear]);
 
   // Navegação de meses
   const handlePrevMonth = () => {
@@ -50,10 +75,16 @@ const MonthlyAgenda = () => {
       revenue: 0
     };
 
+    // Filtrar agendamentos do mês atual
+    const currentMonthAppointments = appointments.filter(appt => {
+      const apptDate = new Date(appt.appointmentDate);
+      return apptDate.getMonth() === currentMonth && apptDate.getFullYear() === currentYear;
+    });
+
     // Dias do mês
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
-      const dayAppointments = mockAgenda.filter(appt => appt.date === dateStr);
+      const dayAppointments = currentMonthAppointments.filter(appt => appt.appointmentDate === dateStr);
       
       days.push({
         day: d,
@@ -61,23 +92,23 @@ const MonthlyAgenda = () => {
         appointments: dayAppointments
       });
 
-      // Atualiza resumo
+      // Atualiza resumo baseado no status da API (SCHEDULED, CANCELLED, COMPLETED)
       dayAppointments.forEach(appt => {
         summary.total++;
-        if (appt.status === 'confirmed') {
+        if (appt.status === 'COMPLETED') {
           summary.confirmed++;
-          summary.revenue += appt.price || 0;
-        } else if (appt.status === 'pending') {
+          summary.revenue += appt.servicePrice || 0;
+        } else if (appt.status === 'SCHEDULED') {
           summary.pending++;
-          summary.revenue += appt.price || 0;
-        } else if (appt.status === 'canceled') {
+          summary.revenue += appt.servicePrice || 0;
+        } else if (appt.status === 'CANCELLED') {
           summary.canceled++;
         }
       });
     }
 
     return { calendarDays: days, monthSummary: summary };
-  }, [currentMonth, currentYear]);
+  }, [currentMonth, currentYear, appointments]);
 
   return (
     <div className="monthly-agenda-container">

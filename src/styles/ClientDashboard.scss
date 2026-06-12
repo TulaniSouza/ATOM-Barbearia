@@ -1,0 +1,192 @@
+.client-dashboard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  @include tablet-up {
+    padding: 3rem 1.5rem;
+  }
+
+  .dashboard-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+
+    @include tablet-up {
+      text-align: left;
+    }
+
+    .title-display {
+      font-family: $font-display;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+
+      .highlight {
+        color: $accent-gold;
+      }
+    }
+
+    .subtitle {
+      color: $text-muted;
+      font-size: 1.1rem;
+    }
+  }
+
+  .selection-area {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+
+    .form-group {
+      flex: 1;
+      minWidth: 200px;
+
+      label {
+        display: block;
+        margin-bottom: 0.75rem;
+        color: $accent-gold;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      select, input[type="date"] {
+        width: 100%;
+        padding: 1rem;
+        background-color: $bg-card;
+        border: 1px solid $border-suttle;
+        color: $text-light;
+        border-radius: 8px;
+        font-family: $font-base;
+        font-size: 1rem;
+        transition: all 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: $accent-gold;
+          box-shadow: 0 0 0 2px rgba($accent-gold, 0.1);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .booking-card {
+    background-color: $bg-card;
+    border: 1px solid $border-suttle;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    margin-bottom: 2rem;
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+      .icon {
+        color: $accent-gold;
+        font-size: 2.5rem;
+      }
+
+      .text {
+        h3 {
+          font-family: $font-display;
+          font-size: 1.5rem;
+          color: $text-light;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        p {
+          color: $text-muted;
+          font-size: 0.875rem;
+          margin: 0;
+        }
+      }
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+
+      @include tablet-up {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+
+      .time-btn {
+        background-color: $bg-item;
+        border: 1px solid $border-active;
+        border-radius: 12px;
+        padding: 1.25rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .time {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: $text-light;
+          font-family: $font-base;
+        }
+
+        .label {
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          font-weight: 700;
+          color: $accent-gold;
+          letter-spacing: 0.05em;
+        }
+
+        &:hover {
+          border-color: $accent-gold;
+          background-color: rgba($accent-gold, 0.05);
+          transform: translateY(-4px);
+          box-shadow: 0 5px 15px rgba($accent-gold, 0.1);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+
+  .info-section {
+    .info-card {
+      background-color: rgba($accent-blue, 0.05);
+      border: 1px solid rgba($accent-blue, 0.2);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: $text-muted;
+
+      span {
+        color: $accent-blue;
+        font-size: 1.5rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+  }
+}

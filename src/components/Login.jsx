@@ -1,71 +1,63 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import '../styles/Login.scss';
 import logoImg from '../assets/ATOM.png';
+import api from '../api'; 
 
-export default function Login({ onLoginSuccess, pendingAppointments, setPendingAppointments }) {
+export default function Login({ onLoginSuccess }) {
   const [activeTab, setActiveTab] = useState('login');
+  const [role, setRole] = useState('barber'); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [role, setRole] = useState('customer');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Olá! Sou o Assistente da Hora Marcada. Diga o dia ou horário que deseja agendar (Ex: "Quero marcar às 14:00") que vou verificar no nosso calendário do Google!' }
-  ]);
-  const [chatInput, setChatInput] = useState('');
-  const chatEndRef = useRef(null);
-
-  const availableSlots = ["09:00", "10:00", "11:00", "14:00", "15:00"];
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const sanitizeInput = (text) => text.replace(/<[^>]*>/g, '').trim();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const payload = {
-      email: sanitizeInput(email),
-      name: activeTab === 'cadastrar' ? sanitizeInput(name) : 'Cliente Hora Marcada',
-      phone: activeTab === 'cadastrar' ? sanitizeInput(phone) : 'N/A',
-      role: role,
-      isAuthenticated: true
-    };
-    onLoginSuccess(payload);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setError(null);
   };
 
-  const handleSendMessage = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
+    setIsLoading(true);
+    setError(null);
 
-    const userText = sanitizeInput(chatInput);
-    setMessages(prev => [...prev, { sender: 'user', text: userText }]);
-    setChatInput('');
-
-    setTimeout(() => {
-      let botResponse = "Não encontrei esse horário disponível no calendário do Google. Nossos horários livres hoje são: 09:00, 10:00, 11:00, 14:00 e 15:00.";
-      
-      const matchedTime = availableSlots.find(time => userText.includes(time));
-
-      if (matchedTime) {
-        botResponse = `Ótima notícia! O horário das ${matchedTime} está livre no Google Calendar. Acabei de enviar uma notificação de confirmação para o barbeiro. Aguarde o retorno!`;
+    try {
+      if (activeTab === 'login') {
+        const endpoint = role === 'barber' ? '/auth/login' : '/customers/auth/login';
+        const response = await api.post(endpoint, { email, password });
         
-        const newAppt = {
-          id: Date.now(),
-          client: "Cliente via Assistente Bot",
-          time: matchedTime,
-          service: "Corte Tradicional (Solicitado via Bot)"
-        };
-        setPendingAppointments(prev => [...prev, newAppt]);
-      } else if (userText.toLowerCase().includes('ajuda') || userText.toLowerCase().includes('marcar')) {
-        botResponse = "Para agendar por aqui, basta digitar o horário desejado. Por exemplo: 'Quero agendar às 10:00'.";
-      }
+        const userData = role === 'barber' ? response.data : response.data.data;
 
-      setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-    }, 800);
+        onLoginSuccess({
+          id: userData.barberId || userData.customerId,
+          name: userData.name,
+          email: userData.email,
+          role: role
+        });
+      } else {
+        const endpoint = role === 'barber' ? '/auth/register' : '/customers/auth/register';
+        const payload = role === 'barber' 
+          ? { name, email, password } 
+          : { name, email, password, phone };
+
+        await api.post(endpoint, payload);
+        
+        alert('Conta criada com sucesso! Agora você pode acessar a plataforma.');
+        handleTabChange('login');
+      }
+    } catch (err) {
+      if (err.response) {
+        setError('Dados inválidos. Por favor, verifique as informações e tente novamente.');
+      } else if (err.request) {
+        setError('Estamos com instabilidade em nossa conexão. Por favor, tente novamente em alguns instantes.');
+      } else {
+        setError('Ocorreu um erro inesperado. Nossa equipe já foi notificada.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,26 +65,56 @@ export default function Login({ onLoginSuccess, pendingAppointments, setPendingA
       <div className="login-card">
         <div className="logo-area">
           <img src={logoImg} alt="Atom Logo" className="brand-logo" />
-          <h1>Hora Marcada</h1>
+          <h1 style={{fontFamily: 'Bebas Neue', color: '#cca43b'}}>Hora Marcada</h1>
           <p className="slogan">PRECISÃO NO DETALHE. ESSÊNCIA NO RESULTADO.</p>
         </div>
 
         <div className="auth-tabs">
-          <button type="button" className={activeTab === 'login' ? 'active' : ''} onClick={() => setActiveTab('login')}>Login</button>
-          <button type="button" className={activeTab === 'cadastrar' ? 'active' : ''} onClick={() => setActiveTab('cadastrar')}>Cadastrar</button>
+          <button type="button" className={activeTab === 'login' ? 'active' : ''} onClick={() => handleTabChange('login')}>Login</button>
+          <button type="button" className={activeTab === 'cadastrar' ? 'active' : ''} onClick={() => handleTabChange('cadastrar')}>Cadastrar</button>
+        </div>
+
+        <div className="role-selection" style={{ display: 'flex', gap: '10px', marginBottom: '20px', justifyContent: 'center' }}>
+          <label style={{ color: '#fff', fontSize: '13px', cursor: 'pointer' }}>
+            <input 
+              type="radio" 
+              checked={role === 'barber'} 
+              onChange={() => setRole('barber')} 
+              style={{ marginRight: '5px' }}
+            /> Barbeiro
+          </label>
+          <label style={{ color: '#fff', fontSize: '13px', cursor: 'pointer' }}>
+            <input 
+              type="radio" 
+              checked={role === 'customer'} 
+              onChange={() => setRole('customer')} 
+              style={{ marginRight: '5px' }}
+            /> Cliente
+          </label>
         </div>
 
         <form onSubmit={handleSubmit}>
+          {error && (
+            <div className="error-message" style={{ 
+              color: '#ff4d4d', marginBottom: '1rem', textAlign: 'center', fontSize: '14px',
+              backgroundColor: 'rgba(255, 77, 77, 0.1)', padding: '10px', borderRadius: '6px', border: '1px solid #ff4d4d'
+            }}>
+              {error}
+            </div>
+          )}
+          
           {activeTab === 'cadastrar' && (
             <>
               <div className="form-group">
                 <label>Nome Completo</label>
                 <input type="text" placeholder="Ex: Carlos Silva" value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
-              <div className="form-group">
-                <label>WhatsApp</label>
-                <input type="tel" placeholder="Ex: (11) 99999-9999" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-              </div>
+              {role === 'customer' && (
+                <div className="form-group">
+                  <label>Telefone / WhatsApp</label>
+                  <input type="text" placeholder="Ex: 11999999999" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                </div>
+              )}
             </>
           )}
 
@@ -106,40 +128,11 @@ export default function Login({ onLoginSuccess, pendingAppointments, setPendingA
             <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
 
-          <div className="form-group">
-            <label>Tipo de Conta</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="customer">Cliente</option>
-              <option value="barber">Barbeiro</option>
-            </select>
-          </div>
-
-          <button type="submit" className="submit-btn">
-            {activeTab === 'login' ? 'Login' : 'Cadastrar'}
+          <button type="submit" className="submit-btn" disabled={isLoading}>
+            {isLoading ? 'Processando...' : (activeTab === 'login' ? 'Entrar' : 'Criar Conta')}
           </button>
         </form>
       </div>
-
-      {isChatOpen ? (
-        <div className="chatbot-container">
-          <div className="chatbot-header">
-            <span>Assistente Digital Hora Marcada 🤖</span>
-            <button style={{background:'none', border:'none', color:'#000', cursor:'pointer', fontSize:'20px', fontWeight:'bold'}} onClick={() => setIsChatOpen(false)}>×</button>
-          </div>
-          <div className="chatbot-messages">
-            {messages.map((msg, index) => (
-              <div key={index} className={`msg ${msg.sender}`}>{msg.text}</div>
-            ))}
-            <div ref={chatEndRef} />
-          </div>
-          <form onSubmit={handleSendMessage} className="chatbot-input-area">
-            <input type="text" placeholder="Digite o horário (ex: 14:00)..." value={chatInput} onChange={(e) => setChatInput(e.target.value)} />
-            <button type="submit">Enviar</button>
-          </form>
-        </div>
-      ) : (
-        <button className="chatbot-toggle" onClick={() => setIsChatOpen(true)}>Agendamento Rápido 💬</button>
-      )}
     </div>
   );
 }

@@ -1,32 +1,88 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AppointmentForm from './AppointmentForm';
+import AppointmentService from '../services/AppointmentService';
+import ServiceTypeService from '../services/ServiceTypeService';
 import '../styles/DailyAgenda.scss';
 
-const DailyAgenda = ({ appointments: initialAppointments }) => {
+const DailyAgenda = () => {
   const [filter, setFilter] = useState('all');
-  
-  // Dados mockados baseados no HTML original, caso não venham via props
-  const mockData = initialAppointments || [
-    { id: 1, time: '09:00', duration: '45min', service: 'Corte Masculino', client: 'Jefferson Silva', status: 'confirmed', price: 80 },
-    { id: 2, time: '10:30', duration: '45min', service: 'Corte Masculino', client: 'Lucas Ramos', status: 'confirmed', price: 80 },
-    { id: 3, time: '14:00', duration: '1h', service: 'Corte + Barba', client: 'Marcos Lima', status: 'pending', price: 120 },
-    { id: 4, time: '16:30', duration: '45min', service: 'Corte Masculino', client: 'André Costa', status: 'canceled', price: 80 },
-  ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [services, setServices] = useState([]);
+  const [currentDate, setCurrentDate] = useState('2026-06-02'); // Data de exemplo conforme PRD
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const filteredAppointments = mockData.filter(app => {
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [apptData, serviceData] = await Promise.all([
+        AppointmentService.getByDate(currentDate),
+        ServiceTypeService.getAllActive()
+      ]);
+      setAppointments(apptData);
+      setServices(serviceData);
+    } catch (err) {
+      setError("Erro ao carregar dados da agenda.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [currentDate]);
+
+  const filteredAppointments = appointments.filter(app => {
     if (filter === 'all') return true;
-    return app.status === filter;
+    if (filter === 'confirmed') return app.status === 'COMPLETED';
+    if (filter === 'pending') return app.status === 'SCHEDULED';
+    return false;
   });
 
-  const handleNewAppointment = () => {
-    alert('Funcionalidade de Novo Agendamento em breve!');
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddAppointment = async (formData) => {
+    try {
+      // Mapear campos do form para o request da API
+      const requestData = {
+        customerName: formData.client,
+        customerPhone: formData.phone || "(00) 00000-0000",
+        serviceTypeId: formData.serviceId,
+        appointmentDate: currentDate,
+        appointmentTime: formData.time
+      };
+      await AppointmentService.create(requestData);
+      setIsModalOpen(false);
+      fetchData(); // Atualiza a lista
+    } catch (err) {
+      alert("Erro ao criar agendamento: " + (err.message || "Erro desconhecido"));
+    }
   };
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'confirmed': return 'Confirmado';
-      case 'pending': return 'Pendente';
-      case 'canceled': return 'Cancelado';
+      case 'COMPLETED': return 'Confirmado';
+      case 'SCHEDULED': return 'Pendente';
+      case 'CANCELLED': return 'Cancelado';
       default: return status;
+    }
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'COMPLETED': return 'confirmed';
+      case 'SCHEDULED': return 'pending';
+      case 'CANCELLED': return 'canceled';
+      default: return '';
     }
   };
 
@@ -45,7 +101,7 @@ const DailyAgenda = ({ appointments: initialAppointments }) => {
             <button className="nav-btn">{'>'}</button>
           </div>
           
-          <button className="btn-new" onClick={handleNewAppointment}>
+          <button className="btn-new" onClick={handleOpenModal}>
             + Novo
           </button>
         </div>
@@ -75,29 +131,33 @@ const DailyAgenda = ({ appointments: initialAppointments }) => {
 
       {/* Appointments List */}
       <div className="appointment-list">
-        {filteredAppointments.length > 0 ? (
+        {isLoading ? (
+          <div className="loading-state">Carregando agendamentos...</div>
+        ) : error ? (
+          <div className="error-state">{error}</div>
+        ) : filteredAppointments.length > 0 ? (
           filteredAppointments.map(app => (
-            <div key={app.id} className={`appointment-card border-${app.status} ${app.status === 'canceled' ? 'opacity-muted' : ''}`}>
+            <div key={app.id} className={`appointment-card border-${getStatusClass(app.status)} ${app.status === 'CANCELLED' ? 'opacity-muted' : ''}`}>
               <div className="info-group">
                 <div className="time-block">
-                  <p className="time">{app.time}</p>
-                  <p className="duration">{app.duration}</p>
+                  <p className="time">{app.appointmentTime}</p>
+                  <p className="duration">{app.serviceDurationInMinutes}min</p>
                 </div>
                 
                 <div className="details">
-                  <h3 className="service-name">{app.service}</h3>
+                  <h3 className="service-name">{app.serviceTypeName}</h3>
                   <div className="client-info">
                     <span className="icon">👤</span>
-                    {app.client}
+                    {app.customerName}
                   </div>
                 </div>
               </div>
 
               <div className="status-group">
-                <span className={`status-badge badge-${app.status}`}>
+                <span className={`status-badge badge-${getStatusClass(app.status)}`}>
                   {getStatusLabel(app.status)}
                 </span>
-                <p className="price">R$ {app.price}</p>
+                <p className="price">R$ {app.servicePrice}</p>
               </div>
             </div>
           ))
@@ -105,6 +165,15 @@ const DailyAgenda = ({ appointments: initialAppointments }) => {
           <div className="empty-state">Nenhum agendamento encontrado para este filtro.</div>
         )}
       </div>
+
+      {/* Modal de Novo Agendamento */}
+      {isModalOpen && (
+        <AppointmentForm 
+          onSave={handleAddAppointment} 
+          onCancel={handleCloseModal} 
+          services={services}
+        />
+      )}
     </main>
   );
 };

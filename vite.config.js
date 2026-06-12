@@ -16,5 +16,11 @@ export default defineConfig({
         additionalData: `@use "@/styles/variables" as *; @use "@/styles/mixins" as *;`
       }
     }
-  }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js',
+    css: true,
+  },
 })

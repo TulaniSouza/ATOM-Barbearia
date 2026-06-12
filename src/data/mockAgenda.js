@@ -115,3 +115,14 @@ export const mockAgenda = [
     price: 90.00
   }
 ];
+
+export const mockWorkingHours = [
+  { id: 1, start: '08:00', end: '11:00' },
+  { id: 2, start: '11:00', end: '18:00' },
+];
+
+export const mockServices = [
+  { id: 1, name: 'Corte Masculino', duration: '00:40', price: '80' },
+  { id: 2, name: 'Corte + Barba', duration: '01:00', price: '120' },
+  { id: 3, name: 'Sobrancelha', duration: '00:20', price: '30' },
+];
